@@ -1,4 +1,4 @@
-package com.example.minibattleship;
+package com.example.minibattleship.Client;
 
 import javafx.application.Application;
 import javafx.event.EventHandler;
@@ -11,7 +11,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -22,11 +21,11 @@ public class Client extends Application {
 
     Board boardEnemy, boardYou;
     private Stage stage;
-    private static String host = "localhost";
-    private static int port = 1234;
+    private final static String host = "localhost";
+    private final static int port = 1234;
 
-    public static BufferedReader in;
-    private static BufferedWriter out;
+    private BufferedReader inputReader;
+    private BufferedWriter outputWriter;
     private static Socket socket;
 //    place = prep  -> battle -> end game
     public static String phase = "prep";
@@ -37,6 +36,14 @@ public class Client extends Application {
     public static int order = 1;
 
     public static String rec;
+
+    public BufferedReader getInputReader() {
+        return inputReader;
+    }
+
+    public BufferedWriter getOutputWriter() {
+        return outputWriter;
+    }
 
     //Create board to view on stage
     public Scene createBoard() {
@@ -51,20 +58,18 @@ public class Client extends Application {
         Label receiver = new Label("Receiver");
         recipient = new TextField();
         Button done = new Button("Done placing sea men.");
-        done.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                rec  = recipient.getText();
-                System.out.println("Recipient: "+rec);
-                if(boardYou.prepCount == 0){
-                    sendMessage(rec,"prep",boardYou.enemyCoor);
-                    System.out.println("Sending message...");
-                    try {
-                        String response = in.readLine();
-                        System.out.println("Received: " + response);
-                        String[] res = response.split(";");
-                        boardEnemy.getEnemyPlacement(res[2]);
-                        // Kieerm tra luot cua minh
+        done.setOnMouseClicked(mouseEvent -> {
+            rec  = recipient.getText();
+            System.out.println("Recipient: "+rec);
+            if(Board.prepCount == 0){
+                sendMessage(rec,"prep",boardYou.enemyCoor);
+                System.out.println("Sending message...");
+                try {
+                    String response = inputReader.readLine();
+                    System.out.println("Received: " + response);
+                    String[] res = response.split(";");
+                    boardEnemy.getEnemyPlacement(res[2]);
+                    // Kieerm tra luot cua minh
 //                        if((phase.equals("battle"))) {
 //                            if (order == 2) {
 ////                             neu la luot cua minh, thi nhan phat ban cua doi thu
@@ -75,17 +80,16 @@ public class Client extends Application {
 //                                in.readLine();
 //
 //                        }
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-
-                } else{
-                    Alert alertPrep = new Alert(Alert.AlertType.INFORMATION);
-                    alertPrep.setTitle("Not yet!");
-                    alertPrep.setHeaderText("Results: Unable to send cuz there you still have ships to deploy");
-                    alertPrep.setContentText("Deploy all 7 ships before continuing on!!!");
-                    alertPrep.showAndWait();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
                 }
+
+            } else{
+                Alert alertPrep = new Alert(Alert.AlertType.INFORMATION);
+                alertPrep.setTitle("Not yet!");
+                alertPrep.setHeaderText("Results: Unable to send cuz there you still have ships to deploy");
+                alertPrep.setContentText("Deploy all 7 ships before continuing on!!!");
+                alertPrep.showAndWait();
             }
         });
         VBox container2 = new VBox(50);
@@ -113,10 +117,10 @@ public class Client extends Application {
                     String txtusername = username.getText();
                     System.out.println("Username which just logged in: " +txtusername);
                     if (!txtusername.equals("")) {
-                        out.write(username.getText());
-                        out.newLine();
-                        out.flush();
-                        String Order = in.readLine();
+                        outputWriter.write(username.getText());
+                        outputWriter.newLine();
+                        outputWriter.flush();
+                        String Order = inputReader.readLine();
                         order = Integer.parseInt(Order);
                         System.out.println("Your Order : ");
                         System.out.println("U R playa numero: " + order);
@@ -142,47 +146,40 @@ public class Client extends Application {
     }
 
     //send a message to a specified user, coor = coordinates
-    public static void sendMessage(String username, String action, String coor){
+    public void sendMessage(String username, String action, String coor){
         try {
             String message = username + ";" + action + ";" + coor;
             System.out.println("Sending: "+message);
-            out.write(message);
-            out.newLine();
-            out.flush();
+            outputWriter.write(message);
+            outputWriter.newLine();
+            outputWriter.flush();
             System.out.println("Sent");
         } catch (IOException e){
             e.printStackTrace();
         }
-
     }
 
-
-    public static void sendMessage(String action, String coor){
+    public void sendMessage(String action, String coor){
         try {
             String message = action + ";" + coor;
             System.out.println("Sending: "+message);
-            out.write(action + ";" + coor);
-            out.newLine();
-            out.flush();
+            outputWriter.write(action + ";" + coor);
+            outputWriter.newLine();
+            outputWriter.flush();
             System.out.println("Sent");
 
         } catch (IOException e){
             e.printStackTrace();
         }
-
     }
 
-    public static void receiveMessage(){
-
-    }
-
-
+    public static void receiveMessage(){}
 
     @Override
     public void start(Stage primaryStage) throws IOException {
         socket = new Socket(host, port);
-        out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-        in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        outputWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+        inputReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         stage = primaryStage;
         stage.setX(100);
         stage.setY(100);
@@ -191,22 +188,20 @@ public class Client extends Application {
         primaryStage.setTitle("The epic battles of the battling battleships.");
         primaryStage.setScene(scene);
         primaryStage.show();
-
-
     }
+
     @Override
     public void stop(){
         try {
             System.out.println("Closing client");
-            out.write("bye");
-            out.newLine();
-            out.flush();
+            outputWriter.write("bye");
+            outputWriter.newLine();
+            outputWriter.flush();
             socket.close();
-            in.close();
-            out.close();
+            inputReader.close();
+            outputWriter.close();
         } catch (IOException e){
             System.out.println("Closing failed");
-
             e.printStackTrace();
         }
     }

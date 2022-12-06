@@ -1,4 +1,4 @@
-package com.example.minibattleship;
+package com.example.minibattleship.Client;
 
 import javafx.event.EventHandler;
 import javafx.scene.Parent;
@@ -8,21 +8,19 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
-import java.io.IOException;
-
 public class Board extends Parent {
 
-    private VBox rows = new VBox();
+    private final VBox rows = new VBox();
 //    is this board an enemy's board, yours if false
     private boolean enemy = false;
     //remaining ships, game over when falls to 0
-    private int remaining = 7;
+    private final int remaining = 7;
 //to store x,y coordinates
     private int a, b;
 //    for placing ships
     public static int prepCount = 7;
 //    length of the board
-    private int size = 6;
+    private final int size = 6;
 
     public String enemyCoor = "";
     public String shootCoor = "";
@@ -35,44 +33,42 @@ public class Board extends Parent {
                 HBox row = new HBox();
                 for (int x = 0; x < size; x++) {
                     Cell c = new Cell(x, y, true);
-                    c.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                        @Override
-                        public void handle(MouseEvent mouseEvent) {
+                    c.setOnMouseClicked(mouseEvent -> {
 //                            phase for placing ships
-                            if (Client.phase.equals("prep") && prepCount > 0) {
-                                a = c.x;
-                                b = c.y;
-                                if (place(a, b)) {
-                                    prepCount--;
-                                    enemyCoor += Integer.toString(a) + Integer.toString(b) + ",";
-                                    if (prepCount == 0) {
+                        if (Client.phase.equals("prep") && prepCount > 0) {
+                            a = c.x;
+                            b = c.y;
+                            if (place(a, b)) {
 
-                                        enemyCoor = enemyCoor.substring(0, enemyCoor.length() - 1);
-                                        Client.phase = "battle";
-                                        System.out.println("Changing phase: " + Client.phase);
-                                        System.out.println("Sent Coordinates: " + enemyCoor);
+                                prepCount--;
+                                enemyCoor += a + Integer.toString(b) + ",";
+                                if (prepCount == 0) {
 
-                                    }
-                                } else {
-                                    Alert alertPrep = new Alert(Alert.AlertType.INFORMATION);
-                                    alertPrep.setTitle("Can't place C man.");
-                                    alertPrep.setHeaderText("Results: Unable to deploy due to space being occuPIED.");
-                                    alertPrep.setContentText("Please select another spot dumbass!!!");
-                                    alertPrep.showAndWait();
+                                    enemyCoor = enemyCoor.substring(0, enemyCoor.length() - 1);
+                                    Client.phase = "battle";
+                                    System.out.println("Changing phase: " + Client.phase);
+                                    System.out.println("Sent Coordinates: " + enemyCoor);
+
                                 }
+                            } else {
+                                Alert alertPrep = new Alert(Alert.AlertType.INFORMATION);
+                                alertPrep.setTitle("Can't place C man.");
+                                alertPrep.setHeaderText("Results: Unable to deploy due to space being occuPIED.");
+                                alertPrep.setContentText("Please select another spot dumbass!!!");
+                                alertPrep.showAndWait();
+                            }
 //                                System.out.println(a);
 //                                System.out.println(b);
 //                                System.out.println(coor);
 
 
 //                                phase for shooting
-                            } else if (Client.phase.equals("battle")) {
-                                Alert alertPrep = new Alert(Alert.AlertType.INFORMATION);
-                                alertPrep.setTitle("Can't place C man.");
-                                alertPrep.setHeaderText("Results: Unable to deploy due to all ships already deployed.");
-                                alertPrep.setContentText("Please do NOT touch this grid any longer.");
-                                alertPrep.showAndWait();
-                            }
+                        } else if (Client.phase.equals("battle")) {
+                            Alert alertPrep = new Alert(Alert.AlertType.INFORMATION);
+                            alertPrep.setTitle("Can't place C man.");
+                            alertPrep.setHeaderText("Results: Unable to deploy due to all ships already deployed.");
+                            alertPrep.setContentText("Please do NOT touch this grid any longer.");
+                            alertPrep.showAndWait();
                         }
                     });
                     row.getChildren().add(c);
@@ -173,7 +169,6 @@ public class Board extends Parent {
             } else {
                 return false;
             }
-
         } else {
             return false;
         }
@@ -188,22 +183,17 @@ public class Board extends Parent {
                 cell.setFill(Color.BROWN);
                 cell.containShip = true;
                 return true;
-            } else {
-                return false;
-            }
-
-        } else {
-            return false;
-        }
-
+            } else return false;
+        } else return false;
     }
-
 
 //    place all enemy ship using a message sent from the server, example of a message: 34,12,44,56,13,25,66             **
     public void getEnemyPlacement(String massage) {
         String[] element = massage.split(",");
-        for (int i = 0; i < element.length; i++) {
-            placeEnemy(Integer.parseInt(String.valueOf(element[i].charAt(0))), Integer.parseInt(String.valueOf(element[i].charAt(1))));
+        for (String s : element) {
+            if (!placeEnemy(Integer.parseInt(String.valueOf(s.charAt(0))),
+                    Integer.parseInt(String.valueOf(s.charAt(1)))))
+                System.out.println("ERROR AT getEnemyPlacement method");
         }
     }
 
@@ -257,11 +247,8 @@ public class Board extends Parent {
         return x >= 0 && x < size && y >= 0 && y < size;
     }
 
-
 //    get a certain Cell(each cell already contains its own x and y coordinates)
     public Cell getCell(int x, int y) {
         return (Cell) ((HBox) rows.getChildren().get(y)).getChildren().get(x);
     }
-
-
 }
