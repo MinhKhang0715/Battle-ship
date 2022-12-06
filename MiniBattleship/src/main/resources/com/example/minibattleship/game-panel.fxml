@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefHeight="583.0" prefWidth="645.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.minibattleship.Client.Controllers.GamePanel">
+    <VBox fx:id="enemyBoard" layoutX="100.0" layoutY="37.0" prefHeight="200.0" prefWidth="200.0" />
+    <VBox fx:id="myBoard" layoutX="100.0" layoutY="265.0" prefHeight="200.0" prefWidth="200.0" />
+    <Button fx:id="btnDonePlacingShip" layoutX="133.0" layoutY="483.0" mnemonicParsing="false" onAction="#onDonePlacingShip" text="Done placing sea man" />
+   <Label layoutX="309.0" layoutY="365.0" text="You Board" />
+   <Label layoutX="309.0" layoutY="129.0" text="Enemy's Board" />
+</AnchorPane>

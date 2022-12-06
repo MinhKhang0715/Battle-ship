@@ -1,21 +1,19 @@
-package com.example.minibattleship;
+package com.example.minibattleship.Server;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.HashMap;
 import java.util.Map;
 
 public class Worker implements Runnable {
-    private Socket socket;
+    private final Socket socket;
 
     public Worker(Socket socket) {
         this.socket = socket;
-
     }
-
 
     public void run() {
         System.out.println("Client " + socket.toString() + "accepted");
+
         try {
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             BufferedWriter out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
@@ -31,33 +29,32 @@ public class Worker implements Runnable {
             Server.user.put(input, socket);
             Server.order.put(input, Server.orderNum);
             String orderNumber = String.valueOf(Server.order.get(input));
-            System.out.println("Sending Order #: " +orderNumber);
+            System.out.println("Sending Order #: " + orderNumber);
 //            give players their order
             out.write(orderNumber);
             out.newLine();
             out.flush();
             Server.orderNum++;
             System.out.println("Order, Grand: " + Server.order);
-
             System.out.println("Socket, I hope: " + Server.user);
             System.out.println("Particular socket, I hope: " + Server.user.get(input));
-            System.out.println("Server received: " + input + " from " + socket.toString());
+            System.out.println("Server received: " + input + " from " + socket);
 //            out.write("Username: " + input);
 //            out.newLine();
 //            out.flush();
-            while (true) {
+            while (!socket.isClosed()) {
                 input = in.readLine();
-                if (input.equals("bye")) {
-                    System.out.println("Closing server socket " + socket.toString());
-                    in.close();
-                    out.close();
-                    socket.close();
-                    break;
-                }
+//                if (input.equals("bye")) {
+//                    System.out.println("Closing server socket " + socket);
+//                    in.close();
+//                    out.close();
+//                    socket.close();
+//                    break;
+//                }
 //                message = username;action;coordinates or "all";action;coordinates(this is for sending to everyone).
                 String[] message = input.split(";");
                 if (message.length == 2) {
-                    writeToUser("all",message[0], message[1]);
+                    writeToUser("all", message[0], message[1]);
                 } else if (message.length == 3) {
                     writeToUser(message[0], message[1], message[2]);
                 } else {
@@ -66,20 +63,16 @@ public class Worker implements Runnable {
                     }
                     System.out.println("Something weird happened.");
                 }
-
             }
-
-
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-//    write to someone or everyone
+    //    write to someone or everyone
     private void writeToUser(String username, String action, String message) throws IOException {
-        if(username.equals("all")){
-            BufferedWriter writer = null;
-
+        if (username.equals("all")) {
+            BufferedWriter writer;
             try {
                 for (Map.Entry<String, Socket> entry : Server.user.entrySet()) {
                     Socket temp = entry.getValue();
@@ -91,22 +84,17 @@ public class Worker implements Runnable {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
-        else {
+        } else {
             Socket temp = Server.user.get(username);
-            BufferedWriter writer = null;
+            BufferedWriter writer;
             try {
                 writer = new BufferedWriter(new OutputStreamWriter(temp.getOutputStream()));
                 writer.write(username + ";" + action + ";" + message);
                 writer.newLine();
                 writer.flush();
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
-
 }
-
-
