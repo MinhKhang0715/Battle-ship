@@ -7,7 +7,7 @@ public class Cell extends Rectangle {
     //    coordinates
     public int x, y;
     //    does the cell contain a ship, and has it been shot yet?
-    public boolean containShip = false, wasShot = false;
+    private boolean containShip = false, wasShot = false;
 
     public Cell(int x, int y) {
 //        calling super for Rectangle constructor which lets us set the size of each cell
@@ -18,13 +18,27 @@ public class Cell extends Rectangle {
         this.setStroke(Color.BLACK);
     }
 
-    //to differentiate our board and the enemy's board
-    public Cell(int x, int y, boolean isMyself) {
-        super(30, 30);
-        this.x = x;
-        this.y = y;
-        this.setFill(Color.BLUE);
-        this.setStroke(Color.BLACK);
+    public void setContainShip(boolean containShip) {
+        this.containShip = containShip;
+        if (this.containShip)
+            this.setFill(Color.YELLOW);
     }
+
+    public void setWasShot(boolean wasShot) {
+        this.wasShot = wasShot;
+        if (this.wasShot && this.containShip)
+            this.setFill(Color.CRIMSON);
+        if (this.wasShot && !this.containShip)
+            this.setFill(Color.GREY);
+    }
+
+    public boolean isContainShip() {
+        return containShip;
+    }
+
+    public boolean getWasShot() {
+        return wasShot;
+    }
+
 
 }
