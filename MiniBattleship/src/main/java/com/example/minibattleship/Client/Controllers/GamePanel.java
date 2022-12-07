@@ -4,12 +4,12 @@ import com.example.minibattleship.Client.Cell;
 import com.example.minibattleship.Client.ClientTest;
 import com.example.minibattleship.Client.TCPConnection;
 import com.example.minibattleship.Helper.User;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -29,14 +29,13 @@ public class GamePanel {
     private String username;
     private String[] enemyCoordinate;
     private String myCoordinate = "";
-    private boolean isEnemyGoFirst;
-
-    public void setUsername(String name) {
-        username = name;
-    }
 
     public GamePanel() {
         tcpConnection = TCPConnection.getInstance(ClientTest.getSocket());
+    }
+
+    public void setUsername(String name) {
+        username = name;
     }
 
     @FXML
@@ -57,10 +56,14 @@ public class GamePanel {
         state = GameState.Battling;
         User coordinateFromServer = (User) tcpConnection.readMessage();
         enemyCoordinate = coordinateFromServer.getMessage().split(",");
-        enemyBoard.setDisable(false);
+        boolean isEnemyGoFirst = coordinateFromServer.getIsGoFirst();
+        if (!isEnemyGoFirst)
+            enemyBoard.setDisable(false);
         myBoard.setDisable(true);
         populateEnemyBoardTest();
         battling();
+        Thread thread = new Thread(new ServerListener());
+        thread.start();
         btnDonePlacingShip.setDisable(true);
     }
 
@@ -95,8 +98,7 @@ public class GamePanel {
                     if (shotResult.equals("Already shot")) {
                         System.out.println("Already shot");
                         alert("Attention!", "Invalid Shot!!", "The cell had already been shot");
-                    }
-                    else {
+                    } else {
                         if (shotResult.equals("Hit")) {
                             System.out.println("HIT");
                             enemyShips--;
@@ -104,7 +106,8 @@ public class GamePanel {
                                 alert("Winner", "Congratulation, you won!!", "You have destroyed all enemy's ships");
                                 enemyBoard.setDisable(true);
                                 myBoard.setDisable(true);
-                            } else tcpConnection.sendMessage(new User().setUsername(username).setGameState("Battling").setMessage("Hit," + shotCoordinate));
+                            } else
+                                tcpConnection.sendMessage(new User().setUsername(username).setGameState("Battling").setMessage("Hit," + shotCoordinate));
                         } else if (shotResult.equals("Missed")) {
                             System.out.println("MISSED");
                             tcpConnection.sendMessage(new User().setUsername(username).setGameState("Battling").setMessage("Missed," + shotCoordinate));
@@ -112,22 +115,6 @@ public class GamePanel {
                         System.out.println("End of placeShot");
                         enemyBoard.setDisable(true);
                         System.out.println("Waiting for enemy's shot");
-                        User fromServer = (User) tcpConnection.readMessage();
-                        System.out.println("Username: " + fromServer.getUsername() + " Message: " + fromServer.getMessage());
-                        String[] enemyShotCoordinate = fromServer.getMessage().split(",");
-                        int xCoordinate = Integer.parseInt(String.valueOf(enemyShotCoordinate[1].charAt(0)));
-                        int yCoordinate = Integer.parseInt(String.valueOf(enemyShotCoordinate[1].charAt(1)));
-                        ((Cell) ((HBox) myBoard.getChildren().get(yCoordinate)).getChildren().get(xCoordinate)).setWasShot(true);
-                        if (enemyShotCoordinate[0].equals("Hit")) {
-                            remains--;
-                            System.out.println("Ship remains: " + remains);
-                            if (remains == 0) {
-                                alert("Too bad", "You lost", "All of your ships have been destroyed by the enemy");
-                            }
-                            enemyBoard.setDisable(false);
-                        } else if (enemyShotCoordinate[0].equals("Missed")) {
-                            enemyBoard.setDisable(false);
-                        }
                     }
                 });
             }
@@ -202,4 +189,33 @@ public class GamePanel {
     }
 
     private enum GameState {PlacingShip, Battling, GameOver}
+
+    private class ServerListener implements Runnable {
+        private final TCPConnection tcpConnection = GamePanel.this.tcpConnection;
+
+        @Override
+        public void run() {
+            while (!tcpConnection.isClose()) {
+                User messageObject = (User) tcpConnection.readMessage();
+                System.out.println("Received: User: " + messageObject.getUsername() + " Game state: " + messageObject.getGameState() + " Message: " + messageObject.getMessage());
+                String gameState = messageObject.getGameState();
+                if ("Battling".equals(gameState)) {
+                    String[] enemyShotCoordinate = messageObject.getMessage().split(",");
+                    int xCoordinate = Integer.parseInt(String.valueOf(enemyShotCoordinate[1].charAt(0)));
+                    int yCoordinate = Integer.parseInt(String.valueOf(enemyShotCoordinate[1].charAt(1)));
+                    Platform.runLater(() -> ((Cell) ((HBox) GamePanel.this.myBoard.getChildren().get(yCoordinate)).getChildren().get(xCoordinate)).setWasShot(true));
+                    if (enemyShotCoordinate[0].equals("Hit")) {
+                        GamePanel.this.remains--;
+                        System.out.println("Ship remains: " + GamePanel.this.remains);
+                        if (GamePanel.this.remains == 0) {
+                            alert("Too bad", "You lost", "All of your ships have been destroyed by the enemy");
+                        }
+                        Platform.runLater(() -> GamePanel.this.enemyBoard.setDisable(false));
+                    } else if (enemyShotCoordinate[0].equals("Missed")) {
+                        Platform.runLater(() -> GamePanel.this.enemyBoard.setDisable(false));
+                    }
+                }
+            }
+        }
+    }
 }
