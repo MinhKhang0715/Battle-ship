@@ -29,6 +29,10 @@ public class TCPConnection {
         return instance;
     }
 
+    public boolean isClose() {
+        return socket.isClosed();
+    }
+
     public void sendMessage(User messageObject) {
         try {
             outputStream.writeObject(messageObject);
