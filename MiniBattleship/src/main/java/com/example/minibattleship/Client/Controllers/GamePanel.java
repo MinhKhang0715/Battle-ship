@@ -3,9 +3,8 @@ package com.example.minibattleship.Client.Controllers;
 import com.example.minibattleship.Client.Cell;
 import com.example.minibattleship.Client.ClientTest;
 import com.example.minibattleship.Client.TCPConnection;
-import com.example.minibattleship.Helper.User;
+import com.example.minibattleship.Helper.UserMessage;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
@@ -46,15 +45,15 @@ public class GamePanel {
     }
 
     @FXML
-    public void onDonePlacingShip(ActionEvent actionEvent) {
+    public void onDonePlacingShip() {
         System.out.println("My coordinate: " + myCoordinate);
-        User user = new User()
+        UserMessage userMessage = new UserMessage()
                 .setUsername(username)
                 .setGameState("PlacingShip")
                 .setMessage(myCoordinate);
-        tcpConnection.sendMessage(user);
+        tcpConnection.sendMessage(userMessage);
         state = GameState.Battling;
-        User coordinateFromServer = (User) tcpConnection.readMessage();
+        UserMessage coordinateFromServer = (UserMessage) tcpConnection.readMessage();
         enemyCoordinate = coordinateFromServer.getMessage().split(",");
         boolean isEnemyGoFirst = coordinateFromServer.getIsGoFirst();
         if (!isEnemyGoFirst)
@@ -107,10 +106,10 @@ public class GamePanel {
                                 enemyBoard.setDisable(true);
                                 myBoard.setDisable(true);
                             } else
-                                tcpConnection.sendMessage(new User().setUsername(username).setGameState("Battling").setMessage("Hit," + shotCoordinate));
+                                tcpConnection.sendMessage(new UserMessage().setUsername(username).setGameState("Battling").setMessage("Hit," + shotCoordinate));
                         } else if (shotResult.equals("Missed")) {
                             System.out.println("MISSED");
-                            tcpConnection.sendMessage(new User().setUsername(username).setGameState("Battling").setMessage("Missed," + shotCoordinate));
+                            tcpConnection.sendMessage(new UserMessage().setUsername(username).setGameState("Battling").setMessage("Missed," + shotCoordinate));
                         }
                         System.out.println("End of placeShot");
                         enemyBoard.setDisable(true);
@@ -196,7 +195,7 @@ public class GamePanel {
         @Override
         public void run() {
             while (!tcpConnection.isClose()) {
-                User messageObject = (User) tcpConnection.readMessage();
+                UserMessage messageObject = (UserMessage) tcpConnection.readMessage();
                 System.out.println("Received: User: " + messageObject.getUsername() + " Game state: " + messageObject.getGameState() + " Message: " + messageObject.getMessage());
                 String gameState = messageObject.getGameState();
                 if ("Battling".equals(gameState)) {

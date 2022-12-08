@@ -1,6 +1,6 @@
 package com.example.minibattleship.Client;
 
-import com.example.minibattleship.Helper.User;
+import com.example.minibattleship.Helper.UserMessage;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -24,7 +24,7 @@ public class ClientTest extends Application {
         try {
             socket = new Socket(host, port);
             TCPConnection connection = TCPConnection.getInstance(socket);
-            connection.sendMessage(new User().setUsername("").setGameState("Initial").setMessage("Initial process"));
+            connection.sendMessage(new UserMessage().setUsername("").setGameState("Initial").setMessage("Initial process"));
             FXMLLoader fxmlLoader = new FXMLLoader(Objects.requireNonNull(getClass().getResource("/com/example/minibattleship/login.fxml")));
             stage.setTitle("Login");
             stage.setScene(new Scene(fxmlLoader.load()));
