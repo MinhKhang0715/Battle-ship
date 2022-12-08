@@ -2,19 +2,19 @@ package com.example.minibattleship.Helper;
 
 import java.io.Serializable;
 
-public class User implements Serializable {
+public class UserMessage implements Serializable {
     private String username;
     private String gameState;
     private String message;
     private boolean isGoFirst;
 
-    public User(String name, String state, String msg) {
+    public UserMessage(String name, String state, String msg) {
         username = name;
         gameState = state;
         message = msg;
     }
 
-    public User() {
+    public UserMessage() {
         username = "";
         gameState = "";
         message = "";
@@ -28,29 +28,23 @@ public class User implements Serializable {
 
     public boolean getIsGoFirst() { return isGoFirst; }
 
-    public User setUsername(String username) {
+    public UserMessage setUsername(String username) {
         this.username = username;
         return this;
     }
 
-    public User setGameState(String gameState) {
+    public UserMessage setGameState(String gameState) {
         this.gameState = gameState;
         return this;
     }
 
-    public User setMessage(String message) {
+    public UserMessage setMessage(String message) {
         this.message = message;
         return this;
     }
 
-    public User setIsGoFirst(boolean isGoFirst) {
+    public UserMessage setIsGoFirst(boolean isGoFirst) {
         this.isGoFirst = isGoFirst;
         return this;
     }
-
-    public void setUsernameNoReturn(String username) { this.username = username; }
-
-    public void setGameStateNoreturn(String gameState) { this.gameState = gameState; }
-
-    public void setMessageNoReturn(String message) { this.message = message; }
 }

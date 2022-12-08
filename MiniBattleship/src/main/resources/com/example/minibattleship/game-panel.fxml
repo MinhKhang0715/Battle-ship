@@ -2,13 +2,25 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="583.0" prefWidth="645.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.minibattleship.Client.Controllers.GamePanel">
+<AnchorPane prefHeight="583.0" prefWidth="808.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.minibattleship.Client.Controllers.GamePanel">
     <VBox fx:id="enemyBoard" layoutX="100.0" layoutY="37.0" prefHeight="200.0" prefWidth="200.0" />
     <VBox fx:id="myBoard" layoutX="100.0" layoutY="265.0" prefHeight="200.0" prefWidth="200.0" />
     <Button fx:id="btnDonePlacingShip" layoutX="133.0" layoutY="483.0" mnemonicParsing="false" onAction="#onDonePlacingShip" text="Done placing sea man" />
-   <Label layoutX="309.0" layoutY="365.0" text="You Board" />
-   <Label layoutX="309.0" layoutY="129.0" text="Enemy's Board" />
+   <Label layoutX="321.0" layoutY="365.0" text="You Board" />
+   <Label fx:id="lblEnemyBoard" layoutX="309.0" layoutY="129.0" text="Enemy's Board" />
+   <TextArea fx:id="messageArea" layoutX="497.0" layoutY="92.0" prefHeight="331.0" prefWidth="293.0" />
+   <TextField fx:id="messageField" layoutX="497.0" layoutY="440.0" prefHeight="25.0" prefWidth="223.0" />
+   <Button fx:id="btnSendMessage" layoutX="738.0" layoutY="440.0" mnemonicParsing="false" onAction="#onSendMessageClick" text="Send" />
+   <Label fx:id="lblStatus" layoutX="152.0" layoutY="249.0" text="Status" />
+    <AnchorPane fx:id="shipStatus" layoutX="307.0" layoutY="389.0" prefHeight="63.0" prefWidth="134.0">
+        <Label layoutX="7.0" layoutY="6.0" text="Your ship" />
+        <Label layoutX="7.0" layoutY="36.0" text="Enemy's ship" />
+        <Label fx:id="lblMyShipQuantity" layoutX="65.0" layoutY="6.0" text="Label" />
+        <Label fx:id="lblEnemyShipQuantity" layoutX="79.0" layoutY="36.0" text="Label" />
+    </AnchorPane>
 </AnchorPane>

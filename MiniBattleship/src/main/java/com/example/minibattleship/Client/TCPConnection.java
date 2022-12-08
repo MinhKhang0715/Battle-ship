@@ -1,6 +1,6 @@
 package com.example.minibattleship.Client;
 
-import com.example.minibattleship.Helper.User;
+import com.example.minibattleship.Helper.UserMessage;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -33,7 +33,7 @@ public class TCPConnection {
         return socket.isClosed();
     }
 
-    public void sendMessage(User messageObject) {
+    public void sendMessage(UserMessage messageObject) {
         try {
             outputStream.writeObject(messageObject);
             outputStream.flush();
