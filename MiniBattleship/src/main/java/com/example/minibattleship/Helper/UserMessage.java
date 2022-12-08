@@ -47,10 +47,4 @@ public class UserMessage implements Serializable {
         this.isGoFirst = isGoFirst;
         return this;
     }
-
-    public void setUsernameNoReturn(String username) { this.username = username; }
-
-    public void setGameStateNoreturn(String gameState) { this.gameState = gameState; }
-
-    public void setMessageNoReturn(String message) { this.message = message; }
 }
