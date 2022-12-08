@@ -1,6 +1,6 @@
 package com.example.minibattleship.Client.Controllers;
 
-import com.example.minibattleship.Client.ClientTest;
+import com.example.minibattleship.Client.Client;
 import com.example.minibattleship.Client.TCPConnection;
 import com.example.minibattleship.Helper.UserMessage;
 import javafx.event.ActionEvent;
@@ -22,7 +22,7 @@ public class LoginController {
     private final TCPConnection tcpConnection;
 
     public LoginController() {
-        Socket socket = ClientTest.getSocket();
+        Socket socket = Client.getSocket();
         tcpConnection = TCPConnection.getInstance(socket);
     }
 

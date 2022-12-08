@@ -6,11 +6,12 @@ import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class ServerTest {
+public class Server {
     private final ServerSocket serverSocket;
     private boolean isGoFirst = true;
+    private int id;
 
-    public ServerTest() {
+    public Server() {
         int port = 1234;
         try {
             serverSocket = new ServerSocket(port);
@@ -22,7 +23,7 @@ public class ServerTest {
     }
 
     public void startServer() {
-        int numberOfThreads = 2;
+        int numberOfThreads = 4;
         ExecutorService executor = Executors.newFixedThreadPool(numberOfThreads);
         try {
             while (!serverSocket.isClosed()) {
@@ -46,7 +47,7 @@ public class ServerTest {
     }
 
     public static void main(String[] args) {
-        ServerTest server = new ServerTest();
+        Server server = new Server();
         server.startServer();
     }
 }

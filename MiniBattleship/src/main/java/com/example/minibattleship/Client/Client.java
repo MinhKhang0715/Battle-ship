@@ -10,8 +10,10 @@ import java.io.*;
 import java.net.Socket;
 import java.util.Objects;
 
-public class ClientTest extends Application {
+public class Client extends Application {
     private static Socket socket;
+
+    private int id;
 
     public static Socket getSocket() {
         return socket;

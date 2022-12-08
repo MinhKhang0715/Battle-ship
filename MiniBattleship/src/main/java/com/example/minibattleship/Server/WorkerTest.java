@@ -16,6 +16,7 @@ public class WorkerTest implements Runnable {
     private final ObjectOutputStream outputWriter;
     private UserMessage userMessage;
     private final boolean isGoFirst;
+    private int id;
 
     public WorkerTest(Socket socket, boolean isGoFirst) {
         try {
