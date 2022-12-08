@@ -28,7 +28,7 @@ public class Server {
         try {
             while (!serverSocket.isClosed()) {
                 Socket socket = serverSocket.accept();
-                executor.execute(new WorkerTest(socket, isGoFirst));
+                executor.execute(new Worker(socket, isGoFirst));
                 isGoFirst = !isGoFirst;
             }
         } catch (IOException e) {
