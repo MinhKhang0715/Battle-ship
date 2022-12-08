@@ -9,8 +9,8 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WorkerTest implements Runnable {
-    private static final List<WorkerTest> listOfUsers = new ArrayList<>();
+public class Worker implements Runnable {
+    private static final List<Worker> listOfUsers = new ArrayList<>();
     private final Socket socket;
     private final ObjectInputStream inputReader;
     private final ObjectOutputStream outputWriter;
@@ -18,7 +18,7 @@ public class WorkerTest implements Runnable {
     private final boolean isGoFirst;
     private int id;
 
-    public WorkerTest(Socket socket, boolean isGoFirst) {
+    public Worker(Socket socket, boolean isGoFirst) {
         try {
             this.socket = socket;
             this.isGoFirst = isGoFirst;
@@ -46,7 +46,7 @@ public class WorkerTest implements Runnable {
     }
 
     private void sendMessage(UserMessage message) {
-        for (WorkerTest worker : listOfUsers) {
+        for (Worker worker : listOfUsers) {
             if (!worker.userMessage.getUsername().equals(this.userMessage.getUsername())) {
                 try {
                     worker.outputWriter.writeObject(message);

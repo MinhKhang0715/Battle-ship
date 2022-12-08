@@ -97,6 +97,7 @@ public class GamePanel {
             shipStatus.setVisible(true);
             battling();
             Thread thread = new Thread(new ServerListener());
+            thread.setDaemon(true);
             thread.start();
             btnDonePlacingShip.setDisable(true);
         }
@@ -148,6 +149,7 @@ public class GamePanel {
                             enemyShips--;
                             lblEnemyShipQuantity.setText(String.valueOf(enemyShips));
                             if (enemyShips == 0) {
+                                tcpConnection.sendMessage(new UserMessage().setUsername(username).setGameState("Battling").setMessage("Hit," + shotCoordinate));
                                 alert("Winner", "Congratulation, you won!!", "You have destroyed all enemy's ships");
                                 enemyBoard.setDisable(true);
                                 myBoard.setDisable(true);
@@ -255,7 +257,7 @@ public class GamePanel {
                             GamePanel.this.remains--;
                             System.out.println("Ship remains: " + GamePanel.this.remains);
                             if (GamePanel.this.remains == 0) {
-                                alert("Too bad", "You lost", "All of your ships have been destroyed by the enemy");
+                                Platform.runLater(() -> alert("Too bad", "You lost", "All of your ships have been destroyed by the enemy"));
                             }
                             Platform.runLater(() -> {
                                 GamePanel.this.enemyBoard.setDisable(false);
