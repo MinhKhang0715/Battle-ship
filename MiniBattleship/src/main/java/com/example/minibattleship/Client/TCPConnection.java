@@ -52,4 +52,14 @@ public class TCPConnection {
             throw new RuntimeException(e);
         }
     }
+
+    public int readInt() {
+        try {
+            if (inputStream == null)
+                inputStream = new ObjectInputStream(this.socket.getInputStream());
+            return inputStream.readInt();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

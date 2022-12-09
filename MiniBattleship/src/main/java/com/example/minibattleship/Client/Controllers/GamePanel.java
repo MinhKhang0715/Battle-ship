@@ -33,6 +33,7 @@ public class GamePanel {
     private int prepShips = 7, remains = 7, enemyShips = 7;
     private GameState state;
     private String username;
+    private int id;
     private String[] enemyCoordinate;
     private String myCoordinate = "";
 
@@ -42,6 +43,10 @@ public class GamePanel {
 
     public void setUsername(String name) {
         username = name;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     @FXML
@@ -57,7 +62,7 @@ public class GamePanel {
         messageField.setOnKeyPressed(keyEvent -> {
             if (messageField.isFocused() && keyEvent.getCode() == KeyCode.ENTER && messageField.getText() != null) {
                 messageArea.appendText(messageField.getText() + "\n");
-                tcpConnection.sendMessage(new UserMessage(username, "Battling", "Msg," + messageField.getText()));
+                tcpConnection.sendMessage(new UserMessage(id, username, "Battling", "Msg," + messageField.getText()));
                 messageField.setText("");
             }
         });
@@ -76,6 +81,7 @@ public class GamePanel {
         else {
             System.out.println("My coordinate: " + myCoordinate);
             UserMessage userMessage = new UserMessage()
+                    .setId(id)
                     .setUsername(username)
                     .setGameState("PlacingShip")
                     .setMessage(myCoordinate);
@@ -107,7 +113,7 @@ public class GamePanel {
     public void onSendMessageClick() {
         if (messageField.getText() != null) {
             messageArea.appendText(messageField.getText() + "\n");
-            tcpConnection.sendMessage(new UserMessage(username, "Battling", "Msg," + messageField.getText()));
+            tcpConnection.sendMessage(new UserMessage(id, username, "Battling", "Msg," + messageField.getText()));
             messageField.setText("");
         }
     }
@@ -149,15 +155,15 @@ public class GamePanel {
                             enemyShips--;
                             lblEnemyShipQuantity.setText(String.valueOf(enemyShips));
                             if (enemyShips == 0) {
-                                tcpConnection.sendMessage(new UserMessage().setUsername(username).setGameState("Battling").setMessage("Hit," + shotCoordinate));
+                                tcpConnection.sendMessage(new UserMessage().setId(id).setUsername(username).setGameState("Battling").setMessage("Hit," + shotCoordinate));
                                 alert("Winner", "Congratulation, you won!!", "You have destroyed all enemy's ships");
                                 enemyBoard.setDisable(true);
                                 myBoard.setDisable(true);
                             } else
-                                tcpConnection.sendMessage(new UserMessage().setUsername(username).setGameState("Battling").setMessage("Hit," + shotCoordinate));
+                                tcpConnection.sendMessage(new UserMessage().setId(id).setUsername(username).setGameState("Battling").setMessage("Hit," + shotCoordinate));
                         } else if (shotResult.equals("Missed")) {
                             System.out.println("MISSED");
-                            tcpConnection.sendMessage(new UserMessage().setUsername(username).setGameState("Battling").setMessage("Missed," + shotCoordinate));
+                            tcpConnection.sendMessage(new UserMessage().setId(id).setUsername(username).setGameState("Battling").setMessage("Missed," + shotCoordinate));
                         }
                         System.out.println("End of placeShot");
                         enemyBoard.setDisable(true);

@@ -28,7 +28,8 @@ public class Server {
         try {
             while (!serverSocket.isClosed()) {
                 Socket socket = serverSocket.accept();
-                executor.execute(new Worker(socket, isGoFirst));
+                id++;
+                executor.execute(new Worker(socket, isGoFirst, id));
                 isGoFirst = !isGoFirst;
             }
         } catch (IOException e) {
@@ -47,7 +48,6 @@ public class Server {
     }
 
     public static void main(String[] args) {
-        Server server = new Server();
-        server.startServer();
+        new Server().startServer();
     }
 }
