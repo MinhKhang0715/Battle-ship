@@ -31,19 +31,6 @@ public class Worker implements Runnable {
         }
     }
 
-//    static void testList() {
-//        System.out.println(listOfUsers.size());
-//        for (int i = 0; i < listOfUsers.size(); i++) {
-//            if (listOfUsers.get(i).userMessage != null) {
-//                System.out.println("Info about user " + i);
-//                System.out.println("Username: " + listOfUsers.get(i).userMessage.getUsername());
-//                System.out.println("Game state: " + listOfUsers.get(i).userMessage.getGameState());
-//                System.out.println("Message: " + listOfUsers.get(i).userMessage.getMessage());
-//                System.out.println("Is go first: " + listOfUsers.get(i).isGoFirst);
-//            }
-//        }
-//    }
-
     private void sendMessage(UserMessage message) {
         for (Worker worker : listOfUsers) {
             if (worker.userMessage.getId() != this.userMessage.getId()) {

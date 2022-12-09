@@ -8,12 +8,14 @@ public class UserMessage implements Serializable {
     private String gameState;
     private String message;
     private boolean isGoFirst;
+    private MessageType messageType;
 
-    public UserMessage(int id, String name, String state, String msg) {
+    public UserMessage(int id, String name, String state, String msg, MessageType messageType) {
         this.id = id;
-        username = name;
-        gameState = state;
-        message = msg;
+        this.username = name;
+        this.gameState = state;
+        this.message = msg;
+        this.messageType = messageType;
     }
 
     public UserMessage() {
@@ -21,6 +23,10 @@ public class UserMessage implements Serializable {
         username = "";
         gameState = "";
         message = "";
+    }
+
+    public MessageType getMessageType() {
+        return messageType;
     }
 
     public String getUsername() { return username; }
@@ -35,6 +41,11 @@ public class UserMessage implements Serializable {
 
     public UserMessage setId(int id) {
         this.id = id;
+        return this;
+    }
+
+    public UserMessage setMessageType(MessageType type) {
+        this.messageType = type;
         return this;
     }
 

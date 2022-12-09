@@ -37,5 +37,4 @@ public class Client extends Application {
             throw new RuntimeException(e);
         }
     }
-
 }
