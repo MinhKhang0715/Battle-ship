@@ -12,6 +12,7 @@ public class Server {
     private int id;
 
     public Server() {
+        postIP();
         int port = 1234;
         try {
             serverSocket = new ServerSocket(port);
@@ -20,6 +21,24 @@ public class Server {
             System.out.println("SERVER: CANNOT CREATE SERVER SOCKET");
             throw new RuntimeException(e);
         }
+    }
+
+    private void postIP() {
+        try (Socket socket = new Socket("google.com", 80)) {
+            String localIP = socket.getLocalAddress().toString().subString(1);
+            String apiURL = "https://retoolapi.dev/aEVGGM/data/1";
+            String jsonData = "{\"ip\":\"" + localIP + "\"}";
+            System.out.println(jsonData);
+            Jsoup.connect(apiURL)
+                .ignoreContentType(true)
+                .ignoreHttpError(true)
+                .header("Content-Type", "application/json")
+                .requestBody(jsonData)
+                .method(Connection.Method.PUT).execute();
+        } catch (IOException | NullPointerException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void startServer() {
