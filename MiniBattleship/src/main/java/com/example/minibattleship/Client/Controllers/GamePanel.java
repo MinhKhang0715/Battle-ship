@@ -63,7 +63,7 @@ public class GamePanel {
         messageField.setOnKeyPressed(keyEvent -> {
             if (messageField.isFocused() && keyEvent.getCode() == KeyCode.ENTER && messageField.getText() != null) {
                 messageArea.appendText(messageField.getText() + "\n");
-                tcpConnection.sendMessage(new UserMessage(id, username, "Battling", messageField.getText(), MessageType.MESSENGER));
+                tcpConnection.sendSecuredMessage(new UserMessage(id, username, "Battling", messageField.getText(), MessageType.MESSENGER));
                 messageField.setText("");
             }
         });
@@ -87,9 +87,9 @@ public class GamePanel {
                     .setGameState("PlacingShip")
                     .setMessage(myCoordinate)
                     .setMessageType(MessageType.IN_BATTLE);
-            tcpConnection.sendMessage(userMessage);
+            tcpConnection.sendSecuredMessage(userMessage);
             state = GameState.Battling;
-            UserMessage coordinateFromServer = (UserMessage) tcpConnection.readMessage();
+            UserMessage coordinateFromServer = (UserMessage) tcpConnection.readSecuredMessage();
             enemyCoordinate = coordinateFromServer.getMessage().split(",");
             boolean isEnemyGoFirst = coordinateFromServer.getIsGoFirst();
             if (!isEnemyGoFirst) {
@@ -115,7 +115,7 @@ public class GamePanel {
     public void onSendMessageClick() {
         if (messageField.getText() != null) {
             messageArea.appendText(messageField.getText() + "\n");
-            tcpConnection.sendMessage(new UserMessage(id, username, "Battling", messageField.getText(), MessageType.MESSENGER));
+            tcpConnection.sendSecuredMessage(new UserMessage(id, username, "Battling", messageField.getText(), MessageType.MESSENGER));
             messageField.setText("");
         }
     }
@@ -142,7 +142,7 @@ public class GamePanel {
         enemyShips--;
         lblEnemyShipQuantity.setText(String.valueOf(enemyShips));
         if (enemyShips == 0) {
-            tcpConnection.sendMessage(new UserMessage()
+            tcpConnection.sendSecuredMessage(new UserMessage()
                     .setId(id).setUsername(username)
                     .setGameState("Battling")
                     .setMessage("Hit," + shotCoordinate)
@@ -151,7 +151,7 @@ public class GamePanel {
             enemyBoard.setDisable(true);
             myBoard.setDisable(true);
         } else
-            tcpConnection.sendMessage(new UserMessage()
+            tcpConnection.sendSecuredMessage(new UserMessage()
                     .setId(id).setUsername(username)
                     .setGameState("Battling")
                     .setMessage("Hit," + shotCoordinate)
@@ -177,7 +177,7 @@ public class GamePanel {
                             placeShotHit(shotCoordinate);
                         } else if (shotResult.equals("Missed")) {
                             System.out.println("MISSED");
-                            tcpConnection.sendMessage(new UserMessage()
+                            tcpConnection.sendSecuredMessage(new UserMessage()
                                     .setId(id).setUsername(username)
                                     .setGameState("Battling")
                                     .setMessage("Missed," + shotCoordinate)
@@ -291,7 +291,7 @@ public class GamePanel {
         @Override
         public void run() {
             while (!tcpConnection.isClose()) {
-                UserMessage messageObject = (UserMessage) tcpConnection.readMessage();
+                UserMessage messageObject = (UserMessage) tcpConnection.readSecuredMessage();
                 System.out.println("Received: User: " + messageObject.getUsername() + " Game state: " + messageObject.getGameState() + " Message: " + messageObject.getMessage());
                 String gameState = messageObject.getGameState();
                 if ("Battling".equals(gameState)) {
