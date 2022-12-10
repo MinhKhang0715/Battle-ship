@@ -1,4 +1,4 @@
-package com.example.minibattleship.Helper;
+package com.example.minibattleship.Helpers;
 
 import java.io.Serializable;
 

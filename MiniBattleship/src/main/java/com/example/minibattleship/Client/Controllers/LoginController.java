@@ -2,7 +2,7 @@ package com.example.minibattleship.Client.Controllers;
 
 import com.example.minibattleship.Client.Client;
 import com.example.minibattleship.Client.TCPConnection;
-import com.example.minibattleship.Helper.UserMessage;
+import com.example.minibattleship.Helpers.UserMessage;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;

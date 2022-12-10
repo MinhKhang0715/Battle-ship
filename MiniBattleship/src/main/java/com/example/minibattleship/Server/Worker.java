@@ -1,10 +1,14 @@
 package com.example.minibattleship.Server;
 
-import com.example.minibattleship.Helper.UserMessage;
+import com.example.minibattleship.Helpers.Frame;
+import com.example.minibattleship.Helpers.UserMessage;
+import com.example.minibattleship.Server.Crypto.RSA;
 
 import java.io.*;
 import java.net.Socket;
+import java.security.PublicKey;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Worker implements Runnable {
@@ -16,17 +20,24 @@ public class Worker implements Runnable {
     private final boolean isGoFirst;
 
     public Worker(Socket socket, boolean isGoFirst, int id) {
+        RSA rsaCrypto = RSA.getInstance();
+        PublicKey publicKey = rsaCrypto.getPublicKey();
+        Frame frame = new Frame(id, publicKey.getEncoded());
         try {
             this.socket = socket;
             this.isGoFirst = isGoFirst;
             this.outputWriter = new ObjectOutputStream(socket.getOutputStream());
-            outputWriter.writeInt(id);
+            outputWriter.writeObject(frame);
             outputWriter.flush();
-            System.out.println("From constructor isGoFirst: " + isGoFirst);
             listOfUsers.add(this);
             inputReader = new ObjectInputStream(socket.getInputStream());
+            Frame fromClient = (Frame) inputReader.readObject();
+            byte[] aesKey = rsaCrypto.decrypt(fromClient.getKeyInBytes());
+            System.out.println(Arrays.toString(aesKey));
         } catch (IOException e) {
             System.out.println("WORKER: ERROR AT CONSTRUCTOR");
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
