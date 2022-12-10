@@ -11,8 +11,27 @@ import java.io.*;
 import java.net.Socket;
 import java.util.Objects;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.Connection;
+
 public class Client extends Application {
     private static Socket socket;
+    private String host;
+
+    private void getIP() {
+        String apiURL = "https://retoolapi.dev/aEVGGM/data/1";
+        try {
+            Document doc = Jsoup.connect(apiURL)
+                                .ignoreContentType(true)
+                                .ignoreHttpErrors(true)
+                                .header("Content-Type", "application/json")
+                                .method(Connection.Method.GET).execute().parse();
+
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+    }
 
     public static Socket getSocket() {
         return socket;
