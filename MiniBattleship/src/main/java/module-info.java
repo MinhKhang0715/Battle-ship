@@ -5,6 +5,8 @@ module com.example.minibattleship {
     requires com.dlsc.formsfx;
     requires org.kordamp.ikonli.javafx;
     requires com.almasb.fxgl.all;
+    requires org.jsoup;
+    requires org.json;
 
     opens com.example.minibattleship to javafx.fxml;
 //    exports com.example.minibattleship;

@@ -1,5 +1,8 @@
 package com.example.minibattleship.Server;
 
+import org.jsoup.Connection;
+import org.jsoup.Jsoup;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -23,22 +26,25 @@ public class Server {
         }
     }
 
+    public static void main(String[] args) {
+        new Server().startServer();
+    }
+
     private void postIP() {
         try (Socket socket = new Socket("google.com", 80)) {
-            String localIP = socket.getLocalAddress().toString().subString(1);
+            String localIP = socket.getLocalAddress().toString().substring(1);
             String apiURL = "https://retoolapi.dev/aEVGGM/data/1";
             String jsonData = "{\"ip\":\"" + localIP + "\"}";
             System.out.println(jsonData);
             Jsoup.connect(apiURL)
-                .ignoreContentType(true)
-                .ignoreHttpError(true)
-                .header("Content-Type", "application/json")
-                .requestBody(jsonData)
-                .method(Connection.Method.PUT).execute();
+                    .ignoreContentType(true)
+                    .ignoreHttpErrors(true)
+                    .header("Content-Type", "application/json")
+                    .requestBody(jsonData)
+                    .method(Connection.Method.PUT).execute();
         } catch (IOException | NullPointerException e) {
             e.printStackTrace();
         }
-
     }
 
     public void startServer() {
@@ -64,9 +70,5 @@ public class Server {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public static void main(String[] args) {
-        new Server().startServer();
     }
 }

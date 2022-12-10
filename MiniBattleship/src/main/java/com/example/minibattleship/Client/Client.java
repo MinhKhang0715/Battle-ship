@@ -6,40 +6,41 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
-import java.io.*;
-import java.net.Socket;
-import java.util.Objects;
-
+import org.json.JSONObject;
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.Connection;
+
+import java.io.IOException;
+import java.net.Socket;
+import java.util.Objects;
 
 public class Client extends Application {
     private static Socket socket;
     private String host;
 
+    public static Socket getSocket() {
+        return socket;
+    }
+
     private void getIP() {
         String apiURL = "https://retoolapi.dev/aEVGGM/data/1";
         try {
             Document doc = Jsoup.connect(apiURL)
-                                .ignoreContentType(true)
-                                .ignoreHttpErrors(true)
-                                .header("Content-Type", "application/json")
-                                .method(Connection.Method.GET).execute().parse();
-
+                    .ignoreContentType(true)
+                    .ignoreHttpErrors(true)
+                    .header("Content-Type", "application/json")
+                    .method(Connection.Method.GET).execute().parse();
+            JSONObject jsonObject = new JSONObject(doc.text());
+            this.host = jsonObject.getString("ip");
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
     }
 
-    public static Socket getSocket() {
-        return socket;
-    }
-
     @Override
     public void start(Stage stage) {
-        String host = "localhost";
+        getIP();
         int port = 1234;
         try {
             socket = new Socket(host, port);
