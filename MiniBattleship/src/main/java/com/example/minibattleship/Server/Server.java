@@ -1,5 +1,8 @@
 package com.example.minibattleship.Server;
 
+import org.jsoup.Connection;
+import org.jsoup.Jsoup;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -12,6 +15,7 @@ public class Server {
     private int id;
 
     public Server() {
+        postIP();
         int port = 1234;
         try {
             serverSocket = new ServerSocket(port);
@@ -22,13 +26,35 @@ public class Server {
         }
     }
 
+    public static void main(String[] args) {
+        new Server().startServer();
+    }
+
+    private void postIP() {
+        try (Socket socket = new Socket("google.com", 80)) {
+            String localIP = socket.getLocalAddress().toString().substring(1);
+            String apiURL = "https://retoolapi.dev/aEVGGM/data/1";
+            String jsonData = "{\"ip\":\"" + localIP + "\"}";
+            System.out.println(jsonData);
+            Jsoup.connect(apiURL)
+                    .ignoreContentType(true)
+                    .ignoreHttpErrors(true)
+                    .header("Content-Type", "application/json")
+                    .requestBody(jsonData)
+                    .method(Connection.Method.PUT).execute();
+        } catch (IOException | NullPointerException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void startServer() {
         int numberOfThreads = 4;
         ExecutorService executor = Executors.newFixedThreadPool(numberOfThreads);
         try {
             while (!serverSocket.isClosed()) {
                 Socket socket = serverSocket.accept();
-                executor.execute(new Worker(socket, isGoFirst));
+                id++;
+                executor.execute(new Worker(socket, isGoFirst, id));
                 isGoFirst = !isGoFirst;
             }
         } catch (IOException e) {
@@ -37,17 +63,12 @@ public class Server {
         }
     }
 
-    public void closeServer() {
+    private void closeServer() {
         try {
             if (serverSocket != null)
                 serverSocket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public static void main(String[] args) {
-        Server server = new Server();
-        server.startServer();
     }
 }

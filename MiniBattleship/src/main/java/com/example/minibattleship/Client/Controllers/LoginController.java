@@ -20,10 +20,15 @@ public class LoginController {
     @FXML
     public TextField username;
     private final TCPConnection tcpConnection;
+    private int id;
 
     public LoginController() {
         Socket socket = Client.getSocket();
         tcpConnection = TCPConnection.getInstance(socket);
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public void onLoginButtonClicked(ActionEvent actionEvent) {
@@ -38,6 +43,7 @@ public class LoginController {
                 stage.setTitle(nameOfUser);
                 stage.setScene(new Scene(loader.load()));
                 ((GamePanel) loader.getController()).setUsername(nameOfUser);
+                ((GamePanel) loader.getController()).setId(id);
                 stage.show();
                 ((Node) (actionEvent.getSource())).getScene().getWindow().hide();
             } catch (IOException e) {
