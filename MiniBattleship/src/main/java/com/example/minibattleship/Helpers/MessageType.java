@@ -1,4 +1,4 @@
-package com.example.minibattleship.Helper;
+package com.example.minibattleship.Helpers;
 
 public enum MessageType {
     IN_BATTLE,

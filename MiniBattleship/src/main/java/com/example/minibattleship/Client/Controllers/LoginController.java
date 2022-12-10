@@ -2,7 +2,7 @@ package com.example.minibattleship.Client.Controllers;
 
 import com.example.minibattleship.Client.Client;
 import com.example.minibattleship.Client.TCPConnection;
-import com.example.minibattleship.Helper.UserMessage;
+import com.example.minibattleship.Helpers.UserMessage;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -35,7 +35,7 @@ public class LoginController {
         String nameOfUser = username.getText();
         if (!nameOfUser.equals("")) {
             UserMessage userMessageToSend = new UserMessage().setUsername(nameOfUser).setGameState("Login").setMessage("Testing");
-            tcpConnection.sendMessage(userMessageToSend);
+            tcpConnection.sendSecuredMessage(userMessageToSend);
             System.out.println("Sent " + nameOfUser + " to the server");
             try {
                 FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource("/com/example/minibattleship/game-panel.fxml")));
