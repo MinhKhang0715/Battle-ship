@@ -30,6 +30,7 @@ public class GamePanel {
     @FXML public AnchorPane shipStatus;
     @FXML public Label lblEnemyBoard;
     @FXML public Label lblStatus;
+    @FXML public AnchorPane gamePanel;
 
     private int prepShips = 7, remains = 7, enemyShips = 7;
     private GameState state;
@@ -292,19 +293,26 @@ public class GamePanel {
         public void run() {
             while (tcpConnection.isNotClosed()) {
                 UserMessage messageObject = (UserMessage) tcpConnection.readSecuredMessage();
-                System.out.println("Received: User: " + messageObject.getUsername() + " Game state: " + messageObject.getGameState() + " Message: " + messageObject.getMessage());
-                String gameState = messageObject.getGameState();
-                if ("Battling".equals(gameState)) {
-                    if (messageObject.getMessageType() == MessageType.IN_BATTLE) {
-                        String[] enemyShotCoordinate = messageObject.getMessage().split(",");
-                        updateUIWhenEnemyShot(enemyShotCoordinate);
-                    } else if (messageObject.getMessageType() == MessageType.MESSENGER) {
-                        String msg = messageObject.getMessage();
-                        String username = messageObject.getUsername();
-                        Platform.runLater(() -> {
-                            System.out.println(username + msg);
-                            GamePanel.this.messageArea.appendText(username + ": " + msg + "\n");
-                        });
+                if (messageObject.isAbandonGame()) {
+                    Platform.runLater(() -> {
+                        alert("Winner", "You won!!", messageObject.getUsername() + " has abandoned the game");
+                        GamePanel.this.gamePanel.setDisable(true);
+                    });
+                } else {
+                    System.out.println("Received: User: " + messageObject.getUsername() + " Game state: " + messageObject.getGameState() + " Message: " + messageObject.getMessage());
+                    String gameState = messageObject.getGameState();
+                    if ("Battling".equals(gameState)) {
+                        if (messageObject.getMessageType() == MessageType.IN_BATTLE) {
+                            String[] enemyShotCoordinate = messageObject.getMessage().split(",");
+                            updateUIWhenEnemyShot(enemyShotCoordinate);
+                        } else if (messageObject.getMessageType() == MessageType.MESSENGER) {
+                            String msg = messageObject.getMessage();
+                            String username = messageObject.getUsername();
+                            Platform.runLater(() -> {
+                                System.out.println(username + msg);
+                                GamePanel.this.messageArea.appendText(username + ": " + msg + "\n");
+                            });
+                        }
                     }
                 }
             }

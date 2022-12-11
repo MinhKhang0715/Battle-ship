@@ -6,7 +6,9 @@ import com.example.minibattleship.Server.Crypto.AES;
 import com.example.minibattleship.Server.Crypto.RSA;
 
 import javax.crypto.SealedObject;
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.security.PublicKey;
 import java.util.ArrayList;
@@ -21,6 +23,7 @@ public class Worker implements Runnable {
     private final boolean isGoFirst;
     private final AES aesCrypto;
     private final int id;
+    private UserMessage userMessage;
 
     public Worker(Socket socket, boolean isGoFirst, int id) {
         RSA rsaCrypto = RSA.getInstance();
@@ -61,13 +64,35 @@ public class Worker implements Runnable {
         }
     }
 
+    private void removeClient() {
+        UserMessage message = new UserMessage().setId(this.id)
+                .setUsername(this.userMessage.getUsername())
+                .setAbandonGame(true);
+        sendMessage(message);
+        listOfUsers.remove(this);
+    }
+
+    private void closeEverything(Socket socket, ObjectInputStream inputStream, ObjectOutputStream outputStream) {
+        removeClient();
+        try {
+            if (socket != null)
+                socket.close();
+            if (inputStream != null)
+                inputStream.close();
+            if (outputStream != null)
+                outputStream.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Override
     public void run() {
         System.out.println("Client " + socket + " accepted");
         while (socket.isConnected()) {
             try {
                 SealedObject fromClient = (SealedObject) inputReader.readObject();
-                UserMessage userMessage = (UserMessage) aesCrypto.decrypt(fromClient);
+                userMessage = (UserMessage) aesCrypto.decrypt(fromClient);
                 switch (userMessage.getGameState()) {
                     case "PlacingShip" -> {
                         System.out.println("Placing ships state");
@@ -84,6 +109,7 @@ public class Worker implements Runnable {
 //                    case "Finished" -> {}
                 }
             } catch (IOException | ClassNotFoundException e) {
+                closeEverything(socket, inputReader, outputWriter);
                 throw new RuntimeException(e);
             }
         }

@@ -9,6 +9,7 @@ public class UserMessage implements Serializable {
     private String message;
     private boolean isGoFirst;
     private MessageType messageType;
+    private boolean isAbandonGame = false;
 
     public UserMessage(int id, String name, String state, String msg, MessageType messageType) {
         this.id = id;
@@ -23,6 +24,15 @@ public class UserMessage implements Serializable {
         username = "";
         gameState = "";
         message = "";
+    }
+
+    public boolean isAbandonGame() {
+        return isAbandonGame;
+    }
+
+    public UserMessage setAbandonGame(boolean abandonGame) {
+        isAbandonGame = abandonGame;
+        return this;
     }
 
     public MessageType getMessageType() {

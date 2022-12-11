@@ -7,6 +7,7 @@ import com.example.minibattleship.Helpers.MessageType;
 import com.example.minibattleship.Helpers.UserMessage;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
@@ -49,6 +50,14 @@ public class WatcherController {
         }
     }
 
+    private void alert() {
+        Alert alertPrep = new Alert(Alert.AlertType.INFORMATION);
+        alertPrep.setTitle("Game over");
+        alertPrep.setHeaderText("The game has ended due to a player has abandoned the game");
+        alertPrep.setContentText("");
+        alertPrep.showAndWait();
+    }
+
     private class ServerListener implements Runnable {
         private final TCPConnection connection = WatcherController.this.tcpConnection;
 
@@ -83,6 +92,9 @@ public class WatcherController {
         public void run() {
             while (connection.isNotClosed()) {
                 UserMessage messageObject = (UserMessage) connection.readSecuredMessage();
+                if (messageObject.isAbandonGame()) {
+                    Platform.runLater(WatcherController.this::alert);
+                }
                 String gameState = messageObject.getGameState();
                 switch (gameState) {
                     case "PlacingShip" -> populateBoard(messageObject.getId(), messageObject);
