@@ -13,7 +13,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
-public class WatcherController {
+public class ViewerController {
     private final TCPConnection tcpConnection = TCPConnection.getInstance(Client.getSocket());
 
     @FXML public VBox player2Board;
@@ -59,17 +59,17 @@ public class WatcherController {
     }
 
     private class ServerListener implements Runnable {
-        private final TCPConnection connection = WatcherController.this.tcpConnection;
+        private final TCPConnection connection = ViewerController.this.tcpConnection;
 
         private void populateBoard(int id, UserMessage message) {
             switch (id) {
                 case 1 -> Platform.runLater(() -> {
-                    WatcherController.this.lblPlayer1Board.setText(message.getUsername());
-                    populatePlayerBoard(WatcherController.this.player1Board, message.getMessage().split(","));
+                    ViewerController.this.lblPlayer1Board.setText(message.getUsername());
+                    populatePlayerBoard(ViewerController.this.player1Board, message.getMessage().split(","));
                 });
                 case 2 -> Platform.runLater(() -> {
-                    WatcherController.this.lblPlayer2Board.setText(message.getUsername());
-                    populatePlayerBoard(WatcherController.this.player2Board, message.getMessage().split(","));
+                    ViewerController.this.lblPlayer2Board.setText(message.getUsername());
+                    populatePlayerBoard(ViewerController.this.player2Board, message.getMessage().split(","));
                 });
             }
         }
@@ -81,9 +81,9 @@ public class WatcherController {
                 int yCoordinate = Integer.parseInt(String.valueOf(coordinate.charAt(1)));
                 switch (message.getId()) {
                     case 1 ->
-                            Platform.runLater(() -> ((Cell) ((HBox) WatcherController.this.player2Board.getChildren().get(yCoordinate)).getChildren().get(xCoordinate)).setWasShot(true));
+                            Platform.runLater(() -> ((Cell) ((HBox) ViewerController.this.player2Board.getChildren().get(yCoordinate)).getChildren().get(xCoordinate)).setWasShot(true));
                     case 2 ->
-                            Platform.runLater(() -> ((Cell) ((HBox) WatcherController.this.player1Board.getChildren().get(yCoordinate)).getChildren().get(xCoordinate)).setWasShot(true));
+                            Platform.runLater(() -> ((Cell) ((HBox) ViewerController.this.player1Board.getChildren().get(yCoordinate)).getChildren().get(xCoordinate)).setWasShot(true));
                 }
             }
         }
@@ -93,7 +93,7 @@ public class WatcherController {
             while (connection.isNotClosed()) {
                 UserMessage messageObject = (UserMessage) connection.readSecuredMessage();
                 if (messageObject.isAbandonGame()) {
-                    Platform.runLater(WatcherController.this::alert);
+                    Platform.runLater(ViewerController.this::alert);
                 }
                 String gameState = messageObject.getGameState();
                 switch (gameState) {
