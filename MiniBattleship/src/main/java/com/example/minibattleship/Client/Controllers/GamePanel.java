@@ -290,7 +290,7 @@ public class GamePanel {
 
         @Override
         public void run() {
-            while (!tcpConnection.isClose()) {
+            while (tcpConnection.isNotClosed()) {
                 UserMessage messageObject = (UserMessage) tcpConnection.readSecuredMessage();
                 System.out.println("Received: User: " + messageObject.getUsername() + " Game state: " + messageObject.getGameState() + " Message: " + messageObject.getMessage());
                 String gameState = messageObject.getGameState();

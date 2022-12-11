@@ -81,7 +81,7 @@ public class WatcherController {
 
         @Override
         public void run() {
-            while (!connection.isClose()) {
+            while (connection.isNotClosed()) {
                 UserMessage messageObject = (UserMessage) connection.readSecuredMessage();
                 String gameState = messageObject.getGameState();
                 switch (gameState) {

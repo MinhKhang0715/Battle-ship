@@ -33,8 +33,8 @@ public class TCPConnection {
         return instance;
     }
 
-    public boolean isClose() {
-        return socket.isClosed();
+    public boolean isNotClosed() {
+        return !socket.isClosed();
     }
 
     public void sendSecuredMessage(Object messageObject) {
