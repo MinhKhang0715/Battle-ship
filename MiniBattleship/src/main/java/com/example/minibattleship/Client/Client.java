@@ -4,7 +4,6 @@ import com.example.minibattleship.Client.Controllers.LoginController;
 import com.example.minibattleship.Client.Crypto.AES;
 import com.example.minibattleship.Client.Crypto.RSA;
 import com.example.minibattleship.Helpers.Frame;
-import com.example.minibattleship.Helpers.UserMessage;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;

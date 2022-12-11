@@ -33,17 +33,12 @@ public class LoginController {
 
     public void onLoginButtonClicked(ActionEvent actionEvent) {
         String nameOfUser = username.getText();
-        if (!nameOfUser.equals("")) {
-            UserMessage userMessageToSend = new UserMessage().setUsername(nameOfUser).setGameState("Login").setMessage("Testing");
-            tcpConnection.sendSecuredMessage(userMessageToSend);
-            System.out.println("Sent " + nameOfUser + " to the server");
+        if (id == 3) {
             try {
-                FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource("/com/example/minibattleship/game-panel.fxml")));
+                FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource("/com/example/minibattleship/watcher.fxml")));
                 Stage stage = new Stage();
                 stage.setTitle(nameOfUser);
                 stage.setScene(new Scene(loader.load()));
-                ((GamePanel) loader.getController()).setUsername(nameOfUser);
-                ((GamePanel) loader.getController()).setId(id);
                 stage.show();
                 ((Node) (actionEvent.getSource())).getScene().getWindow().hide();
             } catch (IOException e) {
@@ -51,11 +46,30 @@ public class LoginController {
                 throw new RuntimeException(e);
             }
         } else {
-            Alert alertPrep = new Alert(Alert.AlertType.INFORMATION);
-            alertPrep.setTitle("Error");
-            alertPrep.setHeaderText("Results: No username to send");
-            alertPrep.setContentText("Please enter an username in the text field!!!");
-            alertPrep.showAndWait();
+            if (!nameOfUser.equals("")) {
+                UserMessage userMessageToSend = new UserMessage().setUsername(nameOfUser).setGameState("Login").setMessage("Testing");
+                tcpConnection.sendSecuredMessage(userMessageToSend);
+                System.out.println("Sent " + nameOfUser + " to the server");
+                try {
+                    FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource("/com/example/minibattleship/game-panel.fxml")));
+                    Stage stage = new Stage();
+                    stage.setTitle(nameOfUser);
+                    stage.setScene(new Scene(loader.load()));
+                    ((GamePanel) loader.getController()).setUsername(nameOfUser);
+                    ((GamePanel) loader.getController()).setId(id);
+                    stage.show();
+                    ((Node) (actionEvent.getSource())).getScene().getWindow().hide();
+                } catch (IOException e) {
+                    System.out.println("LoginController: ERROR OPENING THE GAME PANEL");
+                    throw new RuntimeException(e);
+                }
+            } else {
+                Alert alertPrep = new Alert(Alert.AlertType.INFORMATION);
+                alertPrep.setTitle("Error");
+                alertPrep.setHeaderText("Results: No username to send");
+                alertPrep.setContentText("Please enter an username in the text field!!!");
+                alertPrep.showAndWait();
+            }
         }
     }
 }

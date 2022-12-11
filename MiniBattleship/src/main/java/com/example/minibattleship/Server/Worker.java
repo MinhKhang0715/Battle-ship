@@ -18,9 +18,9 @@ public class Worker implements Runnable {
     private final Socket socket;
     private final ObjectInputStream inputReader;
     private final ObjectOutputStream outputWriter;
-    private UserMessage userMessage;
     private final boolean isGoFirst;
     private final AES aesCrypto;
+    private final int id;
 
     public Worker(Socket socket, boolean isGoFirst, int id) {
         RSA rsaCrypto = RSA.getInstance();
@@ -30,6 +30,7 @@ public class Worker implements Runnable {
             this.socket = socket;
             this.isGoFirst = isGoFirst;
             this.outputWriter = new ObjectOutputStream(socket.getOutputStream());
+            this.id = id;
             outputWriter.writeObject(frame);
             outputWriter.flush();
             listOfUsers.add(this);
@@ -48,7 +49,7 @@ public class Worker implements Runnable {
 
     private void sendMessage(UserMessage message) {
         for (Worker worker : listOfUsers) {
-            if (worker.userMessage.getId() != this.userMessage.getId()) {
+            if (worker.id != this.id) {
                 try {
                     worker.outputWriter.writeObject(aesCrypto.encrypt(message));
                     worker.outputWriter.flush();
@@ -66,7 +67,7 @@ public class Worker implements Runnable {
         while (socket.isConnected()) {
             try {
                 SealedObject fromClient = (SealedObject) inputReader.readObject();
-                userMessage = (UserMessage) aesCrypto.decrypt(fromClient);
+                UserMessage userMessage = (UserMessage) aesCrypto.decrypt(fromClient);
                 switch (userMessage.getGameState()) {
                     case "PlacingShip" -> {
                         System.out.println("Placing ships state");
