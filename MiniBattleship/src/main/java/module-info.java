@@ -15,5 +15,5 @@ module com.example.minibattleship {
     exports com.example.minibattleship.Client;
     opens com.example.minibattleship.Client to javafx.fxml;
     opens com.example.minibattleship.Client.Controllers to javafx.fxml;
-    exports com.example.minibattleship.Helper;
+    exports com.example.minibattleship.Helpers;
 }

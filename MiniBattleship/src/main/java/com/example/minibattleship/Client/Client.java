@@ -1,7 +1,9 @@
 package com.example.minibattleship.Client;
 
 import com.example.minibattleship.Client.Controllers.LoginController;
-import com.example.minibattleship.Helper.UserMessage;
+import com.example.minibattleship.Client.Crypto.AES;
+import com.example.minibattleship.Client.Crypto.RSA;
+import com.example.minibattleship.Helpers.Frame;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -13,6 +15,8 @@ import org.jsoup.nodes.Document;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.security.Key;
+import java.util.Arrays;
 import java.util.Objects;
 
 public class Client extends Application {
@@ -45,8 +49,15 @@ public class Client extends Application {
         try {
             socket = new Socket(host, port);
             TCPConnection connection = TCPConnection.getInstance(socket);
-            int id = connection.readInt();
-            connection.sendMessage(new UserMessage().setUsername("").setGameState("Initial").setMessage("Initial process"));
+            Frame frame = (Frame) connection.readMessage();
+            int id = frame.getId();
+            RSA rsa = new RSA(frame.getKeyInBytes());
+            AES aes = AES.getInstance();
+            Key aesKey = aes.getAesKey();
+            System.out.println(Arrays.toString(aesKey.getEncoded()));
+            Frame frameToServer = new Frame(id, rsa.encrypt(aesKey.getEncoded()));
+            System.out.println("Id: " + id);
+            connection.sendMessage(frameToServer);
             FXMLLoader fxmlLoader = new FXMLLoader(Objects.requireNonNull(getClass().getResource("/com/example/minibattleship/login.fxml")));
             stage.setTitle("Login");
             stage.setScene(new Scene(fxmlLoader.load()));
