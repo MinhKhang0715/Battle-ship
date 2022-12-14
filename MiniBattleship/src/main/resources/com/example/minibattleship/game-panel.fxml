@@ -35,12 +35,12 @@
         </Label>
     </AnchorPane>
     <AnchorPane fx:id="timeoutStatus" layoutX="31.0" layoutY="315.0" prefHeight="95.0" prefWidth="69.0">
-        <Label fx:id="lblMinute" layoutX="14.0" layoutY="14.0" text="Label">
+        <Label fx:id="lblMinute" layoutX="14.0" layoutY="14.0" text="0m">
             <font>
                 <Font size="18.0"/>
             </font>
         </Label>
-        <Label fx:id="lblSecond" layoutX="14.0" layoutY="48.0" text="Label">
+        <Label fx:id="lblSecond" layoutX="14.0" layoutY="48.0" text="0s">
             <font>
                 <Font size="18.0"/>
             </font>
