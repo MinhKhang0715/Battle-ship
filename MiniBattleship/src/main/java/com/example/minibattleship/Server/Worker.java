@@ -24,6 +24,7 @@ public class Worker implements Runnable {
     private final AES aesCrypto;
     private final int id;
     private UserMessage userMessage;
+    private boolean isWin = false;
 
     public Worker(Socket socket, boolean isGoFirst, int id) {
         RSA rsaCrypto = RSA.getInstance();
@@ -67,7 +68,7 @@ public class Worker implements Runnable {
     }
 
     private void removeClient() {
-        if (this.id < 3) {
+        if (this.id < 3 && !isWin) {
             UserMessage message = new UserMessage().setId(this.id)
                     .setUsername(this.userMessage.getUsername())
                     .setAbandonGame(true);
@@ -111,6 +112,10 @@ public class Worker implements Runnable {
                     case "Timeout" -> {
                         System.out.println(this.id + " Ran out of time");
                         sendMessage(userMessage);
+                        for (Worker worker : listOfUsers) {
+                            if (worker.id != this.id)
+                                worker.isWin = true;
+                        }
                     }
                 }
             } catch (IOException | ClassNotFoundException e) {
