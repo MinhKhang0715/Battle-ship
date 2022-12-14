@@ -4,20 +4,21 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 public class Frame implements Serializable {
-    private int id;
-    private byte[] keyInBytes;
+    private final int id;
+    private final byte[] keyInBytes;
+    private int timeout;
 
     public Frame(int id, byte[] bytes) {
         this.id = id;
         this.keyInBytes = bytes;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public int getTimeout() {
+        return timeout;
     }
 
-    public void setKeyInBytes(byte[] keyInBytes) {
-        this.keyInBytes = keyInBytes;
+    public void setTimeout(int timeout) {
+        this.timeout = timeout;
     }
 
     public byte[] getKeyInBytes() {

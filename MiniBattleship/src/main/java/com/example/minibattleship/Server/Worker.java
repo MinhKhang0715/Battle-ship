@@ -29,6 +29,8 @@ public class Worker implements Runnable {
         RSA rsaCrypto = RSA.getInstance();
         PublicKey publicKey = rsaCrypto.getPublicKey();
         Frame frame = new Frame(id, publicKey.getEncoded());
+        int timeout = 10;
+        frame.setTimeout(timeout);
         try {
             this.socket = socket;
             this.isGoFirst = isGoFirst;

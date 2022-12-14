@@ -42,6 +42,7 @@ public class GamePanel {
     private GameState state;
     private String username;
     private int id;
+    private int timeout;
     private String[] enemyCoordinate;
     private String myCoordinate = "";
     private boolean isMyTurn;
@@ -56,6 +57,10 @@ public class GamePanel {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public void setTimeout(int timeout) {
+        this.timeout = timeout;
     }
 
     @FXML
@@ -305,7 +310,7 @@ public class GamePanel {
         }
 
         private void setCountdown() {
-            int[] timeout = {10};
+            int[] timeout = {GamePanel.this.timeout};
             Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), actionEvent -> {
                 if (GamePanel.this.isMyTurn) {
                     int finalTimeout = timeout[0];
