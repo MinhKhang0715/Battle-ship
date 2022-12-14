@@ -65,10 +65,12 @@ public class Worker implements Runnable {
     }
 
     private void removeClient() {
-        UserMessage message = new UserMessage().setId(this.id)
-                .setUsername(this.userMessage.getUsername())
-                .setAbandonGame(true);
-        sendMessage(message);
+        if (this.id < 3) {
+            UserMessage message = new UserMessage().setId(this.id)
+                    .setUsername(this.userMessage.getUsername())
+                    .setAbandonGame(true);
+            sendMessage(message);
+        }
         listOfUsers.remove(this);
     }
 
