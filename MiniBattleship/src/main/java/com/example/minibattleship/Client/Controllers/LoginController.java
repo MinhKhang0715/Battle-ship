@@ -21,6 +21,7 @@ public class LoginController {
     public TextField username;
     private final TCPConnection tcpConnection;
     private int id;
+    private int timeout;
 
     public LoginController() {
         Socket socket = Client.getSocket();
@@ -29,6 +30,10 @@ public class LoginController {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public void setTimeout(int timeout) {
+        this.timeout = timeout;
     }
 
     public void onLoginButtonClicked(ActionEvent actionEvent) {
@@ -57,6 +62,7 @@ public class LoginController {
                     stage.setScene(new Scene(loader.load()));
                     ((GamePanel) loader.getController()).setUsername(nameOfUser);
                     ((GamePanel) loader.getController()).setId(id);
+                    ((GamePanel) loader.getController()).setTimeout(timeout);
                     stage.show();
                     ((Node) (actionEvent.getSource())).getScene().getWindow().hide();
                 } catch (IOException e) {

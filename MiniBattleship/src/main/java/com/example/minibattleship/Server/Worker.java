@@ -24,11 +24,14 @@ public class Worker implements Runnable {
     private final AES aesCrypto;
     private final int id;
     private UserMessage userMessage;
+    private boolean isWin = false;
 
     public Worker(Socket socket, boolean isGoFirst, int id) {
         RSA rsaCrypto = RSA.getInstance();
         PublicKey publicKey = rsaCrypto.getPublicKey();
         Frame frame = new Frame(id, publicKey.getEncoded());
+        int timeout = 10;
+        frame.setTimeout(timeout);
         try {
             this.socket = socket;
             this.isGoFirst = isGoFirst;
@@ -65,10 +68,12 @@ public class Worker implements Runnable {
     }
 
     private void removeClient() {
-        UserMessage message = new UserMessage().setId(this.id)
-                .setUsername(this.userMessage.getUsername())
-                .setAbandonGame(true);
-        sendMessage(message);
+        if (this.id < 3 && !isWin) {
+            UserMessage message = new UserMessage().setId(this.id)
+                    .setUsername(this.userMessage.getUsername())
+                    .setAbandonGame(true);
+            sendMessage(message);
+        }
         listOfUsers.remove(this);
     }
 
@@ -96,17 +101,22 @@ public class Worker implements Runnable {
                 switch (userMessage.getGameState()) {
                     case "PlacingShip" -> {
                         System.out.println("Placing ships state");
-//                        testList();
                         if (listOfUsers.size() != 1)
                             sendMessage(userMessage.setIsGoFirst(this.isGoFirst));
                     }
                     case "Battling" -> {
                         System.out.println("Battling state");
                         System.out.println("Receive from " + userMessage.getUsername() + " with msg: " + userMessage.getMessage());
-//                        testList();
                         sendMessage(userMessage);
                     }
-//                    case "Finished" -> {}
+                    case "Timeout" -> {
+                        System.out.println(this.id + " Ran out of time");
+                        sendMessage(userMessage);
+                        for (Worker worker : listOfUsers) {
+                            if (worker.id != this.id)
+                                worker.isWin = true;
+                        }
+                    }
                 }
             } catch (IOException | ClassNotFoundException e) {
                 closeEverything(socket, inputReader, outputWriter);
