@@ -6,22 +6,22 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-
-<VBox alignment="CENTER" prefHeight="132.0" prefWidth="294.0" spacing="20.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.minibattleship.Client.Controllers.LoginController">
+<VBox alignment="CENTER" prefHeight="132.0" prefWidth="294.0" spacing="20.0" xmlns="http://javafx.com/javafx/19"
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.minibattleship.Client.Controllers.LoginController">
     <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
     </padding>
     <HBox alignment="CENTER" prefHeight="35.0" prefWidth="222.0" spacing="30.0">
         <VBox.margin>
-            <Insets bottom="20.0" />
+            <Insets bottom="20.0"/>
         </VBox.margin>
 
-        <Label text="Username" />
+        <Label text="Username"/>
         <TextField fx:id="username">
-           <HBox.margin>
-               <Insets />
-           </HBox.margin>
+            <HBox.margin>
+                <Insets/>
+            </HBox.margin>
         </TextField>
     </HBox>
-    <Button onAction="#onLoginButtonClicked" prefHeight="28.0" prefWidth="56.0" text="Get in" />
+    <Button onAction="#onLoginButtonClicked" prefHeight="28.0" prefWidth="56.0" text="Get in"/>
 </VBox>
