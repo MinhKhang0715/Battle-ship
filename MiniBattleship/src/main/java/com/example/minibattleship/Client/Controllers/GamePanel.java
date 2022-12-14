@@ -311,8 +311,11 @@ public class GamePanel {
 
         private void setCountdown() {
             int[] timeout = {GamePanel.this.timeout};
-            Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), actionEvent -> {
-                if (GamePanel.this.isMyTurn) {
+            Timeline timeline = new Timeline();
+            KeyFrame keyFrame = new KeyFrame(Duration.seconds(1), actionEvent -> {
+                if (!GamePanel.this.isMyTurn)
+                    timeout[0] = GamePanel.this.timeout;
+                else {
                     int finalTimeout = timeout[0];
                     Platform.runLater(() -> {
                         GamePanel.this.lblMinute.setText(finalTimeout / 60 + "m");
@@ -329,13 +332,13 @@ public class GamePanel {
                             alert("You lose", "You lost because of running out of time", "");
                             GamePanel.this.gamePanel.setDisable(true);
                         });
+                        timeline.stop();
                     }
                 }
-            }));
-            timeline.setCycleCount(timeout[0]);
+            });
+            timeline.getKeyFrames().add(keyFrame);
+            timeline.setCycleCount(GamePanel.this.timeout);
             timeline.playFromStart();
-            if (!GamePanel.this.isMyTurn || timeout[0] == 0)
-                timeline.stop();
         }
 
         @Override
