@@ -305,7 +305,7 @@ public class GamePanel {
         }
 
         private void setCountdown() {
-            final int[] timeout = {90};
+            int[] timeout = {10};
             Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), actionEvent -> {
                 if (GamePanel.this.isMyTurn) {
                     int finalTimeout = timeout[0];
@@ -327,7 +327,7 @@ public class GamePanel {
                     }
                 }
             }));
-            timeline.setCycleCount(Timeline.INDEFINITE);
+            timeline.setCycleCount(timeout[0]);
             timeline.playFromStart();
             if (!GamePanel.this.isMyTurn || timeout[0] == 0)
                 timeline.stop();

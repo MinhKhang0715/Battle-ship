@@ -96,17 +96,18 @@ public class Worker implements Runnable {
                 switch (userMessage.getGameState()) {
                     case "PlacingShip" -> {
                         System.out.println("Placing ships state");
-//                        testList();
                         if (listOfUsers.size() != 1)
                             sendMessage(userMessage.setIsGoFirst(this.isGoFirst));
                     }
                     case "Battling" -> {
                         System.out.println("Battling state");
                         System.out.println("Receive from " + userMessage.getUsername() + " with msg: " + userMessage.getMessage());
-//                        testList();
                         sendMessage(userMessage);
                     }
-//                    case "Finished" -> {}
+                    case "Timeout" -> {
+                        System.out.println(this.id + " Ran out of time");
+                        sendMessage(userMessage);
+                    }
                 }
             } catch (IOException | ClassNotFoundException e) {
                 closeEverything(socket, inputReader, outputWriter);
