@@ -5,6 +5,8 @@ import com.example.minibattleship.Client.Client;
 import com.example.minibattleship.Client.TCPConnection;
 import com.example.minibattleship.Helpers.MessageType;
 import com.example.minibattleship.Helpers.UserMessage;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -14,6 +16,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.util.Duration;
 
 public class GamePanel {
     private final TCPConnection tcpConnection;
@@ -31,6 +34,9 @@ public class GamePanel {
     @FXML public Label lblEnemyBoard;
     @FXML public Label lblStatus;
     @FXML public AnchorPane gamePanel;
+    @FXML public Label lblMinute;
+    @FXML public Label lblSecond;
+    @FXML public AnchorPane timeoutStatus;
 
     private int prepShips = 7, remains = 7, enemyShips = 7;
     private GameState state;
@@ -38,6 +44,7 @@ public class GamePanel {
     private int id;
     private String[] enemyCoordinate;
     private String myCoordinate = "";
+    private boolean isMyTurn;
 
     public GamePanel() {
         tcpConnection = TCPConnection.getInstance(Client.getSocket());
@@ -96,7 +103,11 @@ public class GamePanel {
             if (!isEnemyGoFirst) {
                 enemyBoard.setDisable(false);
                 lblStatus.setText("Your turn");
-            } else lblStatus.setText("Waiting for enemy's turn");
+                isMyTurn = true;
+            } else {
+                lblStatus.setText("Waiting for enemy's turn");
+                isMyTurn = false;
+            }
             myBoard.setDisable(true);
             populateEnemyBoard();
             lblEnemyBoard.setVisible(true);
@@ -166,6 +177,9 @@ public class GamePanel {
                 Cell cell = (Cell) nodeCell;
                 cell.setOnMouseClicked(mouseEvent -> {
                     System.out.println("SHOT!!");
+                    isMyTurn = false;
+                    lblMinute.setText("0m");
+                    lblSecond.setText("0s");
                     String shotCoordinate = cell.x + Integer.toString(cell.y);
                     String shotResult = placeShot(cell.x, cell.y);
                     System.out.println(shotResult);
@@ -287,16 +301,51 @@ public class GamePanel {
                     GamePanel.this.lblStatus.setText("Your turn");
                 });
             }
+            GamePanel.this.isMyTurn = true;
+        }
+
+        private void setCountdown() {
+            final int[] timeout = {90};
+            Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), actionEvent -> {
+                if (GamePanel.this.isMyTurn) {
+                    int finalTimeout = timeout[0];
+                    Platform.runLater(() -> {
+                        GamePanel.this.lblMinute.setText(finalTimeout / 60 + "m");
+                        GamePanel.this.lblSecond.setText(finalTimeout % 60 + "s");
+                    });
+                    timeout[0]--;
+                    if (timeout[0] == 0) {
+                        GamePanel.this.tcpConnection.sendSecuredMessage(new UserMessage().setId(GamePanel.this.id)
+                                .setUsername(GamePanel.this.username)
+                                .setGameState("Timeout")
+                                .setAbandonGame(true));
+                        System.out.println("Message sent");
+                        Platform.runLater(() -> {
+                            alert("You lose", "You lost because of running out of time", "");
+                            GamePanel.this.gamePanel.setDisable(true);
+                        });
+                    }
+                }
+            }));
+            timeline.setCycleCount(Timeline.INDEFINITE);
+            timeline.playFromStart();
+            if (!GamePanel.this.isMyTurn || timeout[0] == 0)
+                timeline.stop();
         }
 
         @Override
         public void run() {
             while (tcpConnection.isNotClosed()) {
                 UserMessage messageObject = (UserMessage) tcpConnection.readSecuredMessage();
-                if (messageObject.isAbandonGame()) {
+                if (messageObject.isAbandonGame() && !messageObject.getGameState().equals("Timeout")) {
                     Platform.runLater(() -> {
                         alert("Winner", "You won!!", messageObject.getUsername() + " has abandoned the game");
                         GamePanel.this.gamePanel.setDisable(true);
+                    });
+                } else if (messageObject.isAbandonGame() && messageObject.getGameState().equals("Timeout")) {
+                    Platform.runLater(() -> {
+                        GamePanel.this.alert("You won", messageObject.getUsername() + " lost due to running out of time", "");
+                        GamePanel.this.enemyBoard.setDisable(true);
                     });
                 } else {
                     System.out.println("Received: User: " + messageObject.getUsername() + " Game state: " + messageObject.getGameState() + " Message: " + messageObject.getMessage());
@@ -305,6 +354,7 @@ public class GamePanel {
                         if (messageObject.getMessageType() == MessageType.IN_BATTLE) {
                             String[] enemyShotCoordinate = messageObject.getMessage().split(",");
                             updateUIWhenEnemyShot(enemyShotCoordinate);
+                            setCountdown();
                         } else if (messageObject.getMessageType() == MessageType.MESSENGER) {
                             String msg = messageObject.getMessage();
                             String username = messageObject.getUsername();

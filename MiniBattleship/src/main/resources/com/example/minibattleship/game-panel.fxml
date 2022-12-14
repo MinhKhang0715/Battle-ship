@@ -6,21 +6,46 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
 <AnchorPane fx:id="gamePanel" prefHeight="583.0" prefWidth="749.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.minibattleship.Client.Controllers.GamePanel">
     <VBox fx:id="enemyBoard" layoutX="100.0" layoutY="37.0" prefHeight="200.0" prefWidth="200.0" />
     <VBox fx:id="myBoard" layoutX="100.0" layoutY="265.0" prefHeight="200.0" prefWidth="200.0" />
     <Button fx:id="btnDonePlacingShip" layoutX="133.0" layoutY="483.0" mnemonicParsing="false" onAction="#onDonePlacingShip" text="Done placing sea man" />
-   <Label layoutX="321.0" layoutY="365.0" text="You Board" />
-   <Label fx:id="lblEnemyBoard" layoutX="309.0" layoutY="129.0" text="Enemy's Board" />
-   <TextArea fx:id="messageArea" layoutX="441.0" layoutY="92.0" prefHeight="331.0" prefWidth="293.0" />
-   <TextField fx:id="messageField" layoutX="441.0" layoutY="440.0" prefHeight="25.0" prefWidth="223.0" />
-   <Button fx:id="btnSendMessage" layoutX="691.0" layoutY="440.0" mnemonicParsing="false" onAction="#onSendMessageClick" text="Send" />
-   <Label fx:id="lblStatus" layoutX="152.0" layoutY="249.0" text="Status" />
+    <Label layoutX="321.0" layoutY="365.0" text="You Board" />
+    <Label fx:id="lblEnemyBoard" layoutX="309.0" layoutY="129.0" text="Enemy's Board" />
+    <TextArea fx:id="messageArea" layoutX="441.0" layoutY="92.0" prefHeight="331.0" prefWidth="293.0" />
+    <TextField fx:id="messageField" layoutX="441.0" layoutY="440.0" prefHeight="25.0" prefWidth="223.0" />
+    <Button fx:id="btnSendMessage" layoutX="691.0" layoutY="440.0" mnemonicParsing="false" onAction="#onSendMessageClick" text="Send" />
+    <Label fx:id="lblStatus" layoutX="152.0" layoutY="249.0" text="Status">
+        <font>
+            <Font name="System Bold" size="12.0" />
+        </font>
+    </Label>
     <AnchorPane fx:id="shipStatus" layoutX="307.0" layoutY="389.0" prefHeight="63.0" prefWidth="134.0">
         <Label layoutX="7.0" layoutY="6.0" text="Your ship" />
         <Label layoutX="7.0" layoutY="36.0" text="Enemy's ship" />
-        <Label fx:id="lblMyShipQuantity" layoutX="65.0" layoutY="6.0" text="Label" />
-        <Label fx:id="lblEnemyShipQuantity" layoutX="79.0" layoutY="36.0" text="Label" />
+        <Label fx:id="lblMyShipQuantity" layoutX="65.0" layoutY="6.0" text="Label">
+            <font>
+                <Font name="System Bold" size="12.0" />
+            </font>
+        </Label>
+        <Label fx:id="lblEnemyShipQuantity" layoutX="79.0" layoutY="36.0" text="Label">
+            <font>
+                <Font name="System Bold" size="12.0" />
+            </font>
+        </Label>
+    </AnchorPane>
+    <AnchorPane fx:id="timeoutStatus" layoutX="31.0" layoutY="315.0" prefHeight="95.0" prefWidth="69.0">
+        <Label fx:id="lblMinute" layoutX="14.0" layoutY="14.0" text="Label">
+            <font>
+                <Font size="18.0" />
+            </font>
+        </Label>
+        <Label fx:id="lblSecond" layoutX="14.0" layoutY="48.0" text="Label">
+            <font>
+                <Font size="18.0" />
+            </font>
+        </Label>
     </AnchorPane>
 </AnchorPane>
