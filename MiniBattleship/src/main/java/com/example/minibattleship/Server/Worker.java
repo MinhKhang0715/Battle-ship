@@ -109,6 +109,8 @@ public class Worker implements Runnable {
                     case "Battling" -> {
                         System.out.println("Battling state");
                         System.out.println("Receive from " + userMessage.getUsername() + " with msg: " + userMessage.getMessage());
+                        if (userMessage.isWon())
+                            this.isWin = true;
                         sendMessage(userMessage);
                     }
                     case "Timeout" -> {

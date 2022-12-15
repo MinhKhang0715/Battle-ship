@@ -162,9 +162,10 @@ public class GamePanel {
         if (enemyShips == 0) {
             tcpConnection.sendSecuredMessage(new UserMessage()
                     .setId(id).setUsername(username)
-                    .setGameState("GameOver")
+                    .setGameState("Battling")
                     .setMessage("Hit," + shotCoordinate)
-                    .setMessageType(MessageType.IN_BATTLE));
+                    .setMessageType(MessageType.IN_BATTLE)
+                    .setWon(true));
             enemyBoard.setDisable(true);
             myBoard.setDisable(true);
             alert("Winner", "Congratulation, you won!!", "You have destroyed all enemy's ships");

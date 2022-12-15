@@ -10,6 +10,7 @@ public class UserMessage implements Serializable {
     private boolean isGoFirst;
     private MessageType messageType;
     private boolean isAbandonGame = false;
+    private boolean isWon;
 
     public UserMessage(int id, String name, String state, String msg, MessageType messageType) {
         this.id = id;
@@ -24,6 +25,15 @@ public class UserMessage implements Serializable {
         username = "";
         gameState = "";
         message = "";
+    }
+
+    public boolean isWon() {
+        return isWon;
+    }
+
+    public UserMessage setWon(boolean won) {
+        isWon = won;
+        return this;
     }
 
     public boolean isAbandonGame() {
