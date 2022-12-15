@@ -119,6 +119,7 @@ public class Worker implements Runnable {
                                 worker.isWin = true;
                         }
                     }
+                    case "GameOver" -> this.isWin = true;
                 }
             } catch (IOException | ClassNotFoundException e) {
                 closeEverything(socket, inputReader, outputWriter);

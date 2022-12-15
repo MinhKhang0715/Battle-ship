@@ -16,6 +16,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class GamePanel {
@@ -161,7 +162,7 @@ public class GamePanel {
         if (enemyShips == 0) {
             tcpConnection.sendSecuredMessage(new UserMessage()
                     .setId(id).setUsername(username)
-                    .setGameState("Battling")
+                    .setGameState("GameOver")
                     .setMessage("Hit," + shotCoordinate)
                     .setMessageType(MessageType.IN_BATTLE));
             enemyBoard.setDisable(true);
@@ -296,6 +297,7 @@ public class GamePanel {
                     Platform.runLater(() -> {
                         GamePanel.this.enemyBoard.setDisable(true);
                         alert("Too bad", "You lost", "All of your ships have been destroyed by the enemy");
+                        ((Stage) GamePanel.this.gamePanel.getScene().getWindow()).close();
                     });
                 } else {
                     Platform.runLater(() -> {
