@@ -38,7 +38,7 @@ public class LoginController {
 
     public void onLoginButtonClicked(ActionEvent actionEvent) {
         String nameOfUser = username.getText();
-        if (id == 3) {
+        if (id >= 3) {
             try {
                 FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource("/com/example/minibattleship/viewer.fxml")));
                 Stage stage = new Stage();
