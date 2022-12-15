@@ -37,9 +37,11 @@ public class Worker implements Runnable {
             this.isGoFirst = isGoFirst;
             this.outputWriter = new ObjectOutputStream(socket.getOutputStream());
             this.id = id;
+            listOfUsers.add(this);
+
+            // keys exchange with client
             outputWriter.writeObject(frame);
             outputWriter.flush();
-            listOfUsers.add(this);
             inputReader = new ObjectInputStream(socket.getInputStream());
             Frame fromClient = (Frame) inputReader.readObject();
             byte[] aesKey = rsaCrypto.decrypt(fromClient.getKeyInBytes());

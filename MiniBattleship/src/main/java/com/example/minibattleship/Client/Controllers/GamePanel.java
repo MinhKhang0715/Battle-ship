@@ -337,7 +337,7 @@ public class GamePanel {
                 }
             });
             timeline.getKeyFrames().add(keyFrame);
-            timeline.setCycleCount(GamePanel.this.timeout);
+            timeline.setCycleCount(GamePanel.this.timeout + 1);
             timeline.playFromStart();
         }
 
