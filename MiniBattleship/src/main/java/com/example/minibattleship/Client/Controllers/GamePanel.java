@@ -164,9 +164,9 @@ public class GamePanel {
                     .setGameState("Battling")
                     .setMessage("Hit," + shotCoordinate)
                     .setMessageType(MessageType.IN_BATTLE));
-            alert("Winner", "Congratulation, you won!!", "You have destroyed all enemy's ships");
             enemyBoard.setDisable(true);
             myBoard.setDisable(true);
+            alert("Winner", "Congratulation, you won!!", "You have destroyed all enemy's ships");
         } else
             tcpConnection.sendSecuredMessage(new UserMessage()
                     .setId(id).setUsername(username)
@@ -293,13 +293,17 @@ public class GamePanel {
                 GamePanel.this.remains--;
                 System.out.println("Ship remains: " + GamePanel.this.remains);
                 if (GamePanel.this.remains == 0) {
-                    Platform.runLater(() -> alert("Too bad", "You lost", "All of your ships have been destroyed by the enemy"));
+                    Platform.runLater(() -> {
+                        GamePanel.this.enemyBoard.setDisable(true);
+                        alert("Too bad", "You lost", "All of your ships have been destroyed by the enemy");
+                    });
+                } else {
+                    Platform.runLater(() -> {
+                        GamePanel.this.enemyBoard.setDisable(false);
+                        GamePanel.this.lblMyShipQuantity.setText(String.valueOf(GamePanel.this.remains));
+                        GamePanel.this.lblStatus.setText("Your turn");
+                    });
                 }
-                Platform.runLater(() -> {
-                    GamePanel.this.enemyBoard.setDisable(false);
-                    GamePanel.this.lblMyShipQuantity.setText(String.valueOf(GamePanel.this.remains));
-                    GamePanel.this.lblStatus.setText("Your turn");
-                });
             } else if (enemyShotCoordinate[0].equals("Missed")) {
                 Platform.runLater(() -> {
                     GamePanel.this.enemyBoard.setDisable(false);
@@ -352,8 +356,8 @@ public class GamePanel {
                     });
                 } else if (messageObject.isAbandonGame() && messageObject.getGameState().equals("Timeout")) {
                     Platform.runLater(() -> {
-                        GamePanel.this.alert("You won", messageObject.getUsername() + " lost due to running out of time", "");
                         GamePanel.this.enemyBoard.setDisable(true);
+                        GamePanel.this.alert("You won", messageObject.getUsername() + " lost due to running out of time", "");
                     });
                 } else {
                     System.out.println("Received: User: " + messageObject.getUsername() + " Game state: " + messageObject.getGameState() + " Message: " + messageObject.getMessage());
