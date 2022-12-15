@@ -1,8 +1,11 @@
 package com.example.minibattleship.Helpers;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 public class UserMessage implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 6529685098267757690L;
     private int id;
     private String username;
     private String gameState;
