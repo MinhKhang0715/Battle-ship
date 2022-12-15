@@ -12,7 +12,7 @@ import java.util.concurrent.Executors;
 public class Server {
     private final ServerSocket serverSocket;
     private boolean isGoFirst = true;
-    private int id;
+    private int id = 0;
 
     public Server() {
         postIP();

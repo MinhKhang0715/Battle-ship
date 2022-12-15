@@ -286,6 +286,7 @@ public class GamePanel {
 
     private class ServerListener implements Runnable {
         private final TCPConnection tcpConnection = GamePanel.this.tcpConnection;
+        private UserMessage messageObject;
 
         private void updateUIWhenEnemyShot(String[] enemyShotCoordinate) {
             int xCoordinate = Integer.parseInt(String.valueOf(enemyShotCoordinate[1].charAt(0)));
@@ -322,6 +323,8 @@ public class GamePanel {
             KeyFrame keyFrame = new KeyFrame(Duration.seconds(1), actionEvent -> {
                 if (!GamePanel.this.isMyTurn)
                     timeout[0] = GamePanel.this.timeout;
+                if (messageObject.isAbandonGame() && !messageObject.getGameState().equals("Timeout"))
+                    timeline.stop();
                 else {
                     int finalTimeout = timeout[0];
                     Platform.runLater(() -> {
@@ -351,7 +354,7 @@ public class GamePanel {
         @Override
         public void run() {
             while (tcpConnection.isNotClosed()) {
-                UserMessage messageObject = (UserMessage) tcpConnection.readSecuredMessage();
+                messageObject = (UserMessage) tcpConnection.readSecuredMessage();
                 if (messageObject.isAbandonGame() && !messageObject.getGameState().equals("Timeout")) {
                     Platform.runLater(() -> {
                         alert("Winner", "You won!!", messageObject.getUsername() + " has abandoned the game");
