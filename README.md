@@ -13,6 +13,9 @@
 - Giao diện chơi game:
 
     ![](./Images/29_18_GiaoDienChoiGame.png)
+- Giao diện người xem:
+
+    ![](./Images/29_18_GiaoDienNguoiXem.png)
 ### Một số giao diện báo lỗi:
 - Lỗi không điền tên
 
